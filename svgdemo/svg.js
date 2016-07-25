@@ -621,17 +621,22 @@ svg.CreateElement = function(node) {
 }
 
 // load from url
-svg.load = function(ctx, url) {
-	svg.loadXml(ctx, svg.ajax(url));
+svg.load = function(url) {
+	svg.loadXml(svg.ajax(url));
 }
 
 // load from xml
-svg.loadXml = function(ctx, xml) {
-	svg.loadXmlDoc(ctx, svg.parseXml(xml));
+svg.loadXml = function(xml) {
+	svg.loadXmlDoc(svg.parseXml(xml));
 }
 
-svg.loadXmlDoc = function(ctx, dom) {
-	svg.init(ctx);
+svg.loadXmlDoc = function(dom) {
+	var ctx = svg.ctx;
+	
+	var e = svg.CreateElement(dom.documentElement);
+	console.log('e',e);
+	e.root = true;
+	e.addStylesFromStyleDefinition();
 
 	var mapXY = function(p) {
 		var e = ctx.canvas;
@@ -656,11 +661,6 @@ svg.loadXmlDoc = function(ctx, dom) {
 			svg.Mouse.onmousemove(p.x, p.y);
 		};
 	}
-
-	var e = svg.CreateElement(dom.documentElement);
-	console.log('e',e);
-	e.root = true;
-	e.addStylesFromStyleDefinition();
 
 	// render loop
 	var isFirstRender = true;
@@ -718,7 +718,7 @@ svg.loadXmlDoc = function(ctx, dom) {
 		e.render(ctx);
 		if (isFirstRender) {
 			isFirstRender = false;
-			if (typeof svg.opts['renderCallback'] == 'function') svg.opts['renderCallback'](dom);
+			if (typeof svg.opts['renderCallback'] == 'function') svg.opts['renderCallback'](svg);
 		}
 	}
 

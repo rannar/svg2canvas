@@ -52,7 +52,9 @@ var canvg = function (target, s, opts) {
 	if (!(target.childNodes.length == 1 && target.childNodes[0].nodeName == 'OBJECT')) target.svg = svg;
 
 	var ctx = target.getContext('2d');
-	svg.loadXml(ctx, s);
+	svg.init(ctx);
+	
+	// svg.loadXml(s);
 }
 
 // see https://developer.mozilla.org/en-US/docs/Web/API/Element.matches
