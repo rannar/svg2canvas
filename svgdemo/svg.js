@@ -1,3 +1,6 @@
+var createTag = function(tag) {
+    return document.createElementNS("http://www.w3.org/2000/svg", tag);
+};
 
 svg = { opts: {}};
 
@@ -605,18 +608,19 @@ svg.EmptyProperty = new svg.Property('EMPTY', '');
 
 
 // element factory
-svg.CreateElement = function(node) {
-	var className = node.nodeName.replace(/^[^:]+:/,''); // remove namespace
-	className = className.replace(/\-/g,''); // remove dashes
+svg.CreateElement = function(nodeName,nodeAttributes,textValue) {
+	// var className = node.nodeName.replace(/^[^:]+:/,''); // remove namespace
+	// className = className.replace(/\-/g,''); // remove dashes
 	var e = null;
-	if (typeof svg.Element[className] != 'undefined') {
-		e = new svg.Element[className](node);
+	if (typeof svg.Element[nodeName] != 'undefined') {
+		// e = new svg.Element[nodeName](nodeName,nodeAttributes);
+		e = new svg.Element[nodeName](nodeName,nodeAttributes,textValue);
 	}
 	else {
-		e = new svg.Element.MISSING(node);
+		e = new svg.Element.MISSING(nodeName,nodeAttributes);
 	}
 
-	e.type = node.nodeName;
+	e.type = nodeName;
 	return e;
 }
 
@@ -630,13 +634,129 @@ svg.loadXml = function(xml) {
 	svg.loadXmlDoc(svg.parseXml(xml));
 }
 
-svg.loadXmlDoc = function(dom) {
+svg.loadXmlDoc = function() {
 	var ctx = svg.ctx;
 	
-	var e = svg.CreateElement(dom.documentElement);
-	console.log('e',e);
-	e.root = true;
-	e.addStylesFromStyleDefinition();
+	// var e = svg.CreateElement(dom.documentElement);
+	// console.log('e',e);
+	// e.root = true;
+	// e.addStylesFromStyleDefinition();
+	// var e = svg.CreateElement('svg',{
+	// 	'id': 'shapeSvg',
+	// 	'xmlns': 'http://www.w3.org/2000/svg',
+	// 	'version': '1.1'
+	// });
+	// e.root = true;
+	// e.addStylesFromStyleDefinition();
+
+var e = svg.CreateElement("svg", { "id": "shapeSvg", "xmlns": "http://www.w3.org/2000/svg", "version": "1.1" });
+e.root = true;
+e.addStylesFromStyleDefinition();
+var circle2 = svg.CreateElement("circle", { "cx": "100", "cy": "50", "r": "40", "stroke": "black", "stroke-width": "2", "fill": "red" });
+e.addChild(circle2);
+var rect3 = svg.CreateElement("rect", { "width": "300", "height": "100", "style": "fill:rgb(0,0,255);stroke-width:1;stroke:rgb(0,0,0)" });
+e.addChild(rect3);
+var rect4 = svg.CreateElement("rect", { "x": "50", "y": "20", "width": "150", "height": "150", "style": "fill:blue;stroke:pink;stroke-width:5;fill-opacity:0.1;stroke-opacity:0.9" });
+e.addChild(rect4);
+var rect5 = svg.CreateElement("rect", { "x": "50", "y": "20", "width": "150", "height": "150", "style": "fill:blue;stroke:pink;stroke-width:5;opacity:0.5" });
+e.addChild(rect5);
+var rect6 = svg.CreateElement("rect", { "x": "50", "y": "20", "rx": "20", "ry": "20", "width": "150", "height": "150", "style": "fill:red;stroke:black;stroke-width:5;opacity:0.5" });
+e.addChild(rect6);
+var ellipse7 = svg.CreateElement("ellipse", { "cx": "300", "cy": "80", "rx": "100", "ry": "50", "style": "fill:yellow;stroke:purple;stroke-width:2" });
+e.addChild(ellipse7);
+var ellipse8 = svg.CreateElement("ellipse", { "cx": "240", "cy": "100", "rx": "220", "ry": "30", "style": "fill:purple" });
+e.addChild(ellipse8);
+var ellipse9 = svg.CreateElement("ellipse", { "cx": "220", "cy": "70", "rx": "190", "ry": "20", "style": "fill:lime" });
+e.addChild(ellipse9);
+var ellipse10 = svg.CreateElement("ellipse", { "cx": "210", "cy": "45", "rx": "170", "ry": "15", "style": "fill:yellow" });
+e.addChild(ellipse10);
+var line11 = svg.CreateElement("line", { "x1": "0", "y1": "0", "x2": "200", "y2": "200", "style": "stroke:rgb(255,0,0);stroke-width:2" });
+e.addChild(line11);
+var polygon12 = svg.CreateElement("polygon", { "points": "200,10 250,190 160,210", "style": "fill:lime;stroke:purple;stroke-width:1" });
+e.addChild(polygon12);
+var polygon13 = svg.CreateElement("polygon", { "points": "220,10 300,210 170,250 123,234", "style": "fill:lime;stroke:purple;stroke-width:1" });
+e.addChild(polygon13);
+var polygon14 = svg.CreateElement("polygon", { "points": "100,10 40,180 190,60 10,60 160,180", "style": "fill:lime;stroke:purple;stroke-width:5;fill-rule:nonzero;" });
+e.addChild(polygon14);
+var polygon15 = svg.CreateElement("polygon", { "points": "100,10 40,180 190,60 10,60 160,180", "style": "fill:lime;stroke:purple;stroke-width:5;fill-rule:evenodd;" });
+e.addChild(polygon15);
+var polyline16 = svg.CreateElement("polyline", { "points": "0,40 40,40 40,80 80,80 80,120 120,120 120,160", "style": "fill:white;stroke:red;stroke-width:4" });
+e.addChild(polyline16);
+var path17 = svg.CreateElement("path", { "d": "M150 0 L75 200 L225 200 Z" });
+e.addChild(path17);
+var path18 = svg.CreateElement("path", { "id": "lineAB", "d": "M 100 350 l 150 -300", "stroke": "red", "stroke-width": "3", "fill": "none" });
+e.addChild(path18);
+var path19 = svg.CreateElement("path", { "id": "lineBC", "d": "M 250 50 l 150 300", "stroke": "red", "stroke-width": "3", "fill": "none" });
+e.addChild(path19);
+var path20 = svg.CreateElement("path", { "d": "M 175 200 l 150 0", "stroke": "green", "stroke-width": "3", "fill": "none" });
+e.addChild(path20);
+var path21 = svg.CreateElement("path", { "d": "M 100 350 q 150 -300 300 0", "stroke": "blue", "stroke-width": "5", "fill": "none" });
+e.addChild(path21);
+var g22 = svg.CreateElement("g", { "stroke": "black", "stroke-width": "3", "fill": "black" });
+e.addChild(g22);
+var circle23 = svg.CreateElement("circle", { "id": "pointA", "cx": "100", "cy": "350", "r": "3" });
+g22.addChild(circle23);
+var circle24 = svg.CreateElement("circle", { "id": "pointB", "cx": "250", "cy": "50", "r": "3" });
+g22.addChild(circle24);
+var circle25 = svg.CreateElement("circle", { "id": "pointC", "cx": "400", "cy": "350", "r": "3" });
+g22.addChild(circle25);
+var g26 = svg.CreateElement("g", { "font-size": "30", "font": "sans-serif", "fill": "black", "stroke": "none", "text-anchor": "middle" });
+e.addChild(g26);
+var text27 = svg.CreateElement("text", { "x": "100", "y": "350", "dx": "-30" });
+g26.addChild(text27);
+var text28 = svg.CreateElement("text", { "x": "250", "y": "50", "dy": "-10" });
+g26.addChild(text28);
+var text29 = svg.CreateElement("text", { "x": "400", "y": "350", "dx": "30" });
+g26.addChild(text29);
+var text30 = svg.CreateElement("text", { "x": "0", "y": "15", "fill": "red" });
+e.addChild(text30);
+var text31 = svg.CreateElement("text", { "x": "0", "y": "15", "fill": "red", "transform": "rotate(30 20,40)" });
+e.addChild(text31);
+var text32 = svg.CreateElement("text", { "x": "10", "y": "20", "style": "fill:red;" });
+e.addChild(text32);
+var tspan33 = svg.CreateElement("tspan", { "x": "10", "y": "45" }, "First line");
+text32.addChild(tspan33);
+var tspan34 = svg.CreateElement("tspan", { "x": "10", "y": "70" }, "Second line");
+text32.addChild(tspan34);
+var a35 = svg.CreateElement("a", { "xlink:href": "/svg/", "target": "_blank" });
+e.addChild(a35);
+var text36 = svg.CreateElement("text", { "x": "0", "y": "15", "fill": "red" });
+a35.addChild(text36);
+var g37 = svg.CreateElement("g", { "fill": "none" });
+e.addChild(g37);
+var path38 = svg.CreateElement("path", { "stroke": "red", "d": "M5 20 l215 0" });
+g37.addChild(path38);
+var path39 = svg.CreateElement("path", { "stroke": "black", "d": "M5 40 l215 0" });
+g37.addChild(path39);
+var path40 = svg.CreateElement("path", { "stroke": "blue", "d": "M5 60 l215 0" });
+g37.addChild(path40);
+var g41 = svg.CreateElement("g", { "fill": "none", "stroke": "black" });
+e.addChild(g41);
+var path42 = svg.CreateElement("path", { "stroke-width": "2", "d": "M5 20 l215 0" });
+g41.addChild(path42);
+var path43 = svg.CreateElement("path", { "stroke-width": "4", "d": "M5 40 l215 0" });
+g41.addChild(path43);
+var path44 = svg.CreateElement("path", { "stroke-width": "6", "d": "M5 60 l215 0" });
+g41.addChild(path44);
+var g45 = svg.CreateElement("g", { "fill": "none", "stroke": "black", "stroke-width": "6" });
+e.addChild(g45);
+var path46 = svg.CreateElement("path", { "stroke-linecap": "butt", "d": "M5 20 l215 0" });
+g45.addChild(path46);
+var path47 = svg.CreateElement("path", { "stroke-linecap": "round", "d": "M5 40 l215 0" });
+g45.addChild(path47);
+var path48 = svg.CreateElement("path", { "stroke-linecap": "square", "d": "M5 60 l215 0" });
+g45.addChild(path48);
+var g49 = svg.CreateElement("g", { "fill": "none", "stroke": "black", "stroke-width": "4" });
+e.addChild(g49);
+var path50 = svg.CreateElement("path", { "stroke-dasharray": "5,5", "d": "M5 20 l215 0" });
+g49.addChild(path50);
+var path51 = svg.CreateElement("path", { "stroke-dasharray": "10,10", "d": "M5 40 l215 0" });
+g49.addChild(path51);
+var path52 = svg.CreateElement("path", { "stroke-dasharray": "20,10,5,5,5,10", "d": "M5 60 l215 0" });
+g49.addChild(path52);
+
+
+
 
 	var mapXY = function(p) {
 		var e = ctx.canvas;
@@ -821,7 +941,7 @@ svg.Mouse = new (function() {
 // elements
 svg.Element = {}
 
-svg.Element.ElementBase = function(node) {
+svg.Element.ElementBase = function(nodeName,nodeAttributes) {
 	this.attributes = {};
 	this.styles = {};
 	this.stylesSpecificity = {};
@@ -911,11 +1031,17 @@ svg.Element.ElementBase = function(node) {
 		}
 	}
 
-	this.addChild = function(childNode, create) {
-		var child = childNode;
-		if (create) child = svg.CreateElement(childNode);
-		child.parent = this;
-		if (child.type != 'title') { this.children.push(child);	}
+	// this.addChild = function(childNode, create) {
+	// 	var child = childNode;
+	// 	if (create) child = svg.CreateElement(childNode);
+	// 	child.parent = this;
+	// 	if (child.type != 'title') { this.children.push(child);	}
+	// }
+	this.addChild = function(childElement, create){
+		childElement.parent = this;
+		if(childElement.type != 'title'){
+			this.children.push(childElement);
+		}
 	}
 
 	this.addStylesFromStyleDefinition = function () {
@@ -949,12 +1075,17 @@ svg.Element.ElementBase = function(node) {
 		return name;
 	};
 
-	if (node != null && node.nodeType == 1) { //ELEMENT_NODE
+	// if (node != null && node.nodeType == 1) { //ELEMENT_NODE
 		// add attributes
-		for (var i=0; i<node.attributes.length; i++) {
-			var attribute = node.attributes[i];
-			var nodeName = normalizeAttributeName(attribute.nodeName);
-			this.attributes[nodeName] = new svg.Property(nodeName, attribute.value);
+		// for (var i=0; i<node.attributes.length; i++) {
+		// 	var attribute = node.attributes[i];
+		// 	var nodeName = normalizeAttributeName(attribute.nodeName);
+		// 	this.attributes[nodeName] = new svg.Property(nodeName, attribute.value);
+		// }
+		for(var nodeName in nodeAttributes){
+			var nodeValue = nodeAttributes[nodeName];
+			var nodeName = normalizeAttributeName(nodeName);
+			this.attributes[nodeName] = new svg.Property(nodeName,nodeValue);
 		}
 
 		this.addStylesFromStyleDefinition();
@@ -980,22 +1111,22 @@ svg.Element.ElementBase = function(node) {
 		}
 
 		// add children
-		for (var i=0; i<node.childNodes.length; i++) {
-			var childNode = node.childNodes[i];
-			if (childNode.nodeType == 1) this.addChild(childNode, true); //ELEMENT_NODE
-			if (this.captureTextNodes && (childNode.nodeType == 3 || childNode.nodeType == 4)) {
-				var text = childNode.value || childNode.text || childNode.textContent || '';
-				if (svg.compressSpaces(text) != '') {
-					this.addChild(new svg.Element.tspan(childNode), false); // TEXT_NODE
-				}
-			}
-		}
-	}
+		// for (var i=0; i<node.childNodes.length; i++) {
+		// 	var childNode = node.childNodes[i];
+		// 	if (childNode.nodeType == 1) this.addChild(childNode, true); //ELEMENT_NODE
+		// 	if (this.captureTextNodes && (childNode.nodeType == 3 || childNode.nodeType == 4)) {
+		// 		var text = childNode.value || childNode.text || childNode.textContent || '';
+		// 		if (svg.compressSpaces(text) != '') {
+		// 			this.addChild(new svg.Element.tspan(childNode), false); // TEXT_NODE
+		// 		}
+		// 	}
+		// }
+	// }
 }
 
-svg.Element.RenderedElementBase = function(node) {
+svg.Element.RenderedElementBase = function(nodeName,nodeAttributes) {
 	this.base = svg.Element.ElementBase;
-	this.base(node);
+	this.base(nodeName,nodeAttributes);
 
 	this.setContext = function(ctx) {
 		// fill
@@ -1078,9 +1209,9 @@ svg.Element.RenderedElementBase = function(node) {
 }
 svg.Element.RenderedElementBase.prototype = new svg.Element.ElementBase;
 
-svg.Element.PathElementBase = function(node) {
+svg.Element.PathElementBase = function(nodeName,nodeAttributes) {
 	this.base = svg.Element.RenderedElementBase;
-	this.base(node);
+	this.base(nodeName,nodeAttributes);
 
 	this.path = function(ctx) {
 		if (ctx != null) ctx.beginPath();
@@ -1126,9 +1257,9 @@ svg.Element.PathElementBase = function(node) {
 svg.Element.PathElementBase.prototype = new svg.Element.RenderedElementBase;
 
 // svg element
-svg.Element.svg = function(node) {
+svg.Element.svg = function(nodeName,nodeAttributes) {
 	this.base = svg.Element.RenderedElementBase;
-	this.base(node);
+	this.base(nodeName,nodeAttributes);
 
 	this.baseClearContext = this.clearContext;
 	this.clearContext = function(ctx) {
@@ -1209,9 +1340,9 @@ svg.Element.svg = function(node) {
 svg.Element.svg.prototype = new svg.Element.RenderedElementBase;
 
 // rect element
-svg.Element.rect = function(node) {
+svg.Element.rect = function(nodeName,nodeAttributes) {
 	this.base = svg.Element.PathElementBase;
-	this.base(node);
+	this.base(nodeName,nodeAttributes);
 	this.path = function(ctx) {
 		var x = this.attribute('x').toPixels('x');
 		var y = this.attribute('y').toPixels('y');
@@ -1243,9 +1374,9 @@ svg.Element.rect = function(node) {
 svg.Element.rect.prototype = new svg.Element.PathElementBase;
 
 // circle element
-svg.Element.circle = function(node) {
+svg.Element.circle = function(nodeName,nodeAttributes) {
 	this.base = svg.Element.PathElementBase;
-	this.base(node);
+	this.base(nodeName,nodeAttributes);
 
 	this.path = function(ctx) {
 		var cx = this.attribute('cx').toPixels('x');
@@ -1264,9 +1395,9 @@ svg.Element.circle = function(node) {
 svg.Element.circle.prototype = new svg.Element.PathElementBase;
 
 // ellipse element
-svg.Element.ellipse = function(node) {
+svg.Element.ellipse = function(nodeName,nodeAttributes) {
 	this.base = svg.Element.PathElementBase;
-	this.base(node);
+	this.base(nodeName,nodeAttributes);
 
 	this.path = function(ctx) {
 		var KAPPA = 4 * ((Math.sqrt(2) - 1) / 3);
@@ -1291,9 +1422,9 @@ svg.Element.ellipse = function(node) {
 svg.Element.ellipse.prototype = new svg.Element.PathElementBase;
 
 // line element
-svg.Element.line = function(node) {
+svg.Element.line = function(nodeName,nodeAttributes) {
 	this.base = svg.Element.PathElementBase;
-	this.base(node);
+	this.base(nodeName,nodeAttributes);
 
 	this.getPoints = function() {
 		return [
@@ -1322,9 +1453,9 @@ svg.Element.line = function(node) {
 svg.Element.line.prototype = new svg.Element.PathElementBase;
 
 // polyline element
-svg.Element.polyline = function(node) {
+svg.Element.polyline = function(nodeName,nodeAttributes) {
 	this.base = svg.Element.PathElementBase;
-	this.base(node);
+	this.base(nodeName,nodeAttributes);
 
 	this.points = svg.CreatePath(this.attribute('points').value);
 	this.path = function(ctx) {
@@ -1354,9 +1485,9 @@ svg.Element.polyline = function(node) {
 svg.Element.polyline.prototype = new svg.Element.PathElementBase;
 
 // polygon element
-svg.Element.polygon = function(node) {
+svg.Element.polygon = function(nodeName,nodeAttributes) {
 	this.base = svg.Element.polyline;
-	this.base(node);
+	this.base(nodeName,nodeAttributes);
 
 	this.basePath = this.path;
 	this.path = function(ctx) {
@@ -1371,12 +1502,12 @@ svg.Element.polygon = function(node) {
 svg.Element.polygon.prototype = new svg.Element.polyline;
 
 // path element
-svg.Element.path = function(node) {
+svg.Element.path = function(nodeName,nodeAttributes) {
 	this.base = svg.Element.PathElementBase;
-	this.base(node);
+	this.base(nodeName,nodeAttributes);
 
 	var d = this.attribute('d').value;
-	// TODO: convert to real lexer based on http://www.w3.org/TR/SVG11/paths.html#PathDataBNF
+	// TODO: convert to real lexer based on http://www.w3.org/TR/e1/paths.html#PathDataBNF
 	d = d.replace(/,/gm,' '); // get rid of all commas
 	// As the end of a match can also be the start of the next match, we need to run this replace twice.
 	for(var i=0; i<2; i++)
@@ -1624,7 +1755,7 @@ svg.Element.path = function(node) {
 					var cp = pp.getAsCurrentPoint();
 
 					// Conversion from endpoint to center parameterization
-					// http://www.w3.org/TR/SVG11/implnote.html#ArcImplementationNotes
+					// http://www.w3.org/TR/e1/implnote.html#ArcImplementationNotes
 					// x1', y1'
 					var currp = new svg.Point(
 						Math.cos(xAxisRotation) * (curr.x - cp.x) / 2.0 + Math.sin(xAxisRotation) * (curr.y - cp.y) / 2.0,
@@ -1713,9 +1844,9 @@ svg.Element.path = function(node) {
 svg.Element.path.prototype = new svg.Element.PathElementBase;
 
 // pattern element
-svg.Element.pattern = function(node) {
+svg.Element.pattern = function(nodeName,nodeAttributes) {
 	this.base = svg.Element.ElementBase;
-	this.base(node);
+	this.base(nodeName,nodeAttributes);
 
 	this.createPattern = function(ctx, element) {
 		var width = this.attribute('width').toPixels('x', true);
@@ -1753,9 +1884,9 @@ svg.Element.pattern = function(node) {
 svg.Element.pattern.prototype = new svg.Element.ElementBase;
 
 // marker element
-svg.Element.marker = function(node) {
+svg.Element.marker = function(nodeName,nodeAttributes) {
 	this.base = svg.Element.ElementBase;
-	this.base(node);
+	this.base(nodeName,nodeAttributes);
 
 	this.baseRender = this.render;
 	this.render = function(ctx, point, angle) {
@@ -1785,9 +1916,9 @@ svg.Element.marker = function(node) {
 svg.Element.marker.prototype = new svg.Element.ElementBase;
 
 // definitions element
-svg.Element.defs = function(node) {
+svg.Element.defs = function(nodeName,nodeAttributes) {
 	this.base = svg.Element.ElementBase;
-	this.base(node);
+	this.base(nodeName,nodeAttributes);
 
 	this.render = function(ctx) {
 		// NOOP
@@ -1796,9 +1927,9 @@ svg.Element.defs = function(node) {
 svg.Element.defs.prototype = new svg.Element.ElementBase;
 
 // base for gradients
-svg.Element.GradientBase = function(node) {
+svg.Element.GradientBase = function(nodeName,nodeAttributes) {
 	this.base = svg.Element.ElementBase;
-	this.base(node);
+	this.base(nodeName,nodeAttributes);
 
 	this.stops = [];
 	for (var i=0; i<this.children.length; i++) {
@@ -1882,9 +2013,9 @@ svg.Element.GradientBase = function(node) {
 svg.Element.GradientBase.prototype = new svg.Element.ElementBase;
 
 // linear gradient element
-svg.Element.linearGradient = function(node) {
+svg.Element.linearGradient = function(nodeName,nodeAttributes) {
 	this.base = svg.Element.GradientBase;
-	this.base(node);
+	this.base(nodeName,nodeAttributes);
 	
 	this.attributesToInherit.push('x1');
 	this.attributesToInherit.push('y1');
@@ -1924,9 +2055,9 @@ svg.Element.linearGradient = function(node) {
 svg.Element.linearGradient.prototype = new svg.Element.GradientBase;
 
 // radial gradient element
-svg.Element.radialGradient = function(node) {
+svg.Element.radialGradient = function(nodeName,nodeAttributes) {
 	this.base = svg.Element.GradientBase;
-	this.base(node);
+	this.base(nodeName,nodeAttributes);
 	
 	this.attributesToInherit.push('cx');
 	this.attributesToInherit.push('cy');
@@ -1971,9 +2102,9 @@ svg.Element.radialGradient = function(node) {
 svg.Element.radialGradient.prototype = new svg.Element.GradientBase;
 
 // gradient stop element
-svg.Element.stop = function(node) {
+svg.Element.stop = function(nodeName,nodeAttributes) {
 	this.base = svg.Element.ElementBase;
-	this.base(node);
+	this.base(nodeName,nodeAttributes);
 
 	this.offset = this.attribute('offset').numValue();
 	if (this.offset < 0) this.offset = 0;
@@ -1987,9 +2118,9 @@ svg.Element.stop = function(node) {
 svg.Element.stop.prototype = new svg.Element.ElementBase;
 
 // animation base element
-svg.Element.AnimateBase = function(node) {
+svg.Element.AnimateBase = function(nodeName,nodeAttributes) {
 	this.base = svg.Element.ElementBase;
-	this.base(node);
+	this.base(nodeName,nodeAttributes);
 
 	svg.Animations.push(this);
 
@@ -2087,9 +2218,9 @@ svg.Element.AnimateBase = function(node) {
 svg.Element.AnimateBase.prototype = new svg.Element.ElementBase;
 
 // animate element
-svg.Element.animate = function(node) {
+svg.Element.animate = function(nodeName,nodeAttributes) {
 	this.base = svg.Element.AnimateBase;
-	this.base(node);
+	this.base(nodeName,nodeAttributes);
 
 	this.calcValue = function() {
 		var p = this.progress();
@@ -2102,9 +2233,9 @@ svg.Element.animate = function(node) {
 svg.Element.animate.prototype = new svg.Element.AnimateBase;
 
 // animate color element
-svg.Element.animateColor = function(node) {
+svg.Element.animateColor = function(nodeName,nodeAttributes) {
 	this.base = svg.Element.AnimateBase;
-	this.base(node);
+	this.base(nodeName,nodeAttributes);
 
 	this.calcValue = function() {
 		var p = this.progress();
@@ -2124,9 +2255,9 @@ svg.Element.animateColor = function(node) {
 svg.Element.animateColor.prototype = new svg.Element.AnimateBase;
 
 // animate transform element
-svg.Element.animateTransform = function(node) {
+svg.Element.animateTransform = function(nodeName,nodeAttributes) {
 	this.base = svg.Element.AnimateBase;
-	this.base(node);
+	this.base(nodeName,nodeAttributes);
 
 	this.calcValue = function() {
 		var p = this.progress();
@@ -2144,9 +2275,9 @@ svg.Element.animateTransform = function(node) {
 svg.Element.animateTransform.prototype = new svg.Element.animate;
 
 // font element
-svg.Element.font = function(node) {
+svg.Element.font = function(nodeName,nodeAttributes) {
 	this.base = svg.Element.ElementBase;
-	this.base(node);
+	this.base(nodeName,nodeAttributes);
 
 	this.horizAdvX = this.attribute('horiz-adv-x').numValue();
 
@@ -2180,9 +2311,9 @@ svg.Element.font = function(node) {
 svg.Element.font.prototype = new svg.Element.ElementBase;
 
 // font-face element
-svg.Element.fontface = function(node) {
+svg.Element.fontface = function(nodeName,nodeAttributes) {
 	this.base = svg.Element.ElementBase;
-	this.base(node);
+	this.base(nodeName,nodeAttributes);
 
 	this.ascent = this.attribute('ascent').value;
 	this.descent = this.attribute('descent').value;
@@ -2191,18 +2322,18 @@ svg.Element.fontface = function(node) {
 svg.Element.fontface.prototype = new svg.Element.ElementBase;
 
 // missing-glyph element
-svg.Element.missingglyph = function(node) {
+svg.Element.missingglyph = function(nodeName,nodeAttributes) {
 	this.base = svg.Element.path;
-	this.base(node);
+	this.base(nodeName,nodeAttributes);
 
 	this.horizAdvX = 0;
 }
 svg.Element.missingglyph.prototype = new svg.Element.path;
 
 // glyph element
-svg.Element.glyph = function(node) {
+svg.Element.glyph = function(nodeName,nodeAttributes) {
 	this.base = svg.Element.path;
-	this.base(node);
+	this.base(nodeName,nodeAttributes);
 
 	this.horizAdvX = this.attribute('horiz-adv-x').numValue();
 	this.unicode = this.attribute('unicode').value;
@@ -2211,10 +2342,10 @@ svg.Element.glyph = function(node) {
 svg.Element.glyph.prototype = new svg.Element.path;
 
 // text element
-svg.Element.text = function(node) {
+svg.Element.text = function(nodeName,nodeAttributes) {
 	this.captureTextNodes = true;
 	this.base = svg.Element.RenderedElementBase;
-	this.base(node);
+	this.base(nodeName,nodeAttributes);
 
 	this.baseSetContext = this.setContext;
 	this.setContext = function(ctx) {
@@ -2289,9 +2420,9 @@ svg.Element.text = function(node) {
 svg.Element.text.prototype = new svg.Element.RenderedElementBase;
 
 // text base
-svg.Element.TextElementBase = function(node) {
+svg.Element.TextElementBase = function(nodeName,nodeAttributes) {
 	this.base = svg.Element.RenderedElementBase;
-	this.base(node);
+	this.base(nodeName,nodeAttributes);
 
 	this.getGlyph = function(font, text, i) {
 		var c = text[i];
@@ -2391,12 +2522,12 @@ svg.Element.TextElementBase = function(node) {
 svg.Element.TextElementBase.prototype = new svg.Element.RenderedElementBase;
 
 // tspan
-svg.Element.tspan = function(node) {
+svg.Element.tspan = function(nodeName,nodeAttributes,textValue) {
 	this.captureTextNodes = true;
 	this.base = svg.Element.TextElementBase;
-	this.base(node);
+	this.base(nodeName,nodeAttributes);
 
-	this.text = svg.compressSpaces(node.value || node.text || node.textContent || '');
+	this.text = svg.compressSpaces(textValue || '');
 	this.getText = function() {
 		// if this node has children, then they own the text
 		if (this.children.length > 0) { return ''; }
@@ -2406,9 +2537,9 @@ svg.Element.tspan = function(node) {
 svg.Element.tspan.prototype = new svg.Element.TextElementBase;
 
 // tref
-svg.Element.tref = function(node) {
+svg.Element.tref = function(nodeName,nodeAttributes) {
 	this.base = svg.Element.TextElementBase;
-	this.base(node);
+	this.base(nodeName,nodeAttributes);
 
 	this.getText = function() {
 		var element = this.getHrefAttribute().getDefinition();
@@ -2418,17 +2549,21 @@ svg.Element.tref = function(node) {
 svg.Element.tref.prototype = new svg.Element.TextElementBase;
 
 // a element
-svg.Element.a = function(node) {
+svg.Element.a = function(nodeName,nodeAttributes) {
 	this.base = svg.Element.TextElementBase;
-	this.base(node);
+	this.base(nodeName,nodeAttributes);
 
-	this.hasText = node.childNodes.length > 0;
-	for (var i=0; i<node.childNodes.length; i++) {
-		if (node.childNodes[i].nodeType != 3) this.hasText = false;
+	this.hasText = this.children.length > 0;
+	var textIndex = 0;
+	for (var i=0; i<this.children.length; i++) {
+		if (this.children[i] && this.children[i].type=="text" && this.children[i].text) {
+			this.hasText = false;
+			textIndex = i;
+		}
 	}
 
 	// this might contain text
-	this.text = this.hasText ? node.childNodes[0].value : '';
+	this.text = this.hasText ? this.children[i].text : '';
 	this.getText = function() {
 		return this.text;
 	}
@@ -2461,9 +2596,9 @@ svg.Element.a = function(node) {
 svg.Element.a.prototype = new svg.Element.TextElementBase;
 
 // image element
-svg.Element.image = function(node) {
+svg.Element.image = function(nodeName,nodeAttributes) {
 	this.base = svg.Element.RenderedElementBase;
-	this.base(node);
+	this.base(nodeName,nodeAttributes);
 
 	var href = this.getHrefAttribute().value;
 	if (href == '') { return; }
@@ -2522,9 +2657,9 @@ svg.Element.image = function(node) {
 svg.Element.image.prototype = new svg.Element.RenderedElementBase;
 
 // group element
-svg.Element.g = function(node) {
+svg.Element.g = function(nodeName,nodeAttributes) {
 	this.base = svg.Element.RenderedElementBase;
-	this.base(node);
+	this.base(nodeName,nodeAttributes);
 
 	this.getBoundingBox = function() {
 		var bb = new svg.BoundingBox();
@@ -2537,9 +2672,9 @@ svg.Element.g = function(node) {
 svg.Element.g.prototype = new svg.Element.RenderedElementBase;
 
 // symbol element
-svg.Element.symbol = function(node) {
+svg.Element.symbol = function(nodeName,nodeAttributes) {
 	this.base = svg.Element.RenderedElementBase;
-	this.base(node);
+	this.base(nodeName,nodeAttributes);
 
 	this.render = function(ctx) {
 		// NO RENDER
@@ -2548,9 +2683,9 @@ svg.Element.symbol = function(node) {
 svg.Element.symbol.prototype = new svg.Element.RenderedElementBase;
 
 // style element
-svg.Element.style = function(node) {
+svg.Element.style = function(nodeName,nodeAttributes) {
 	this.base = svg.Element.ElementBase;
-	this.base(node);
+	this.base(nodeName,nodeAttributes);
 
 	// text, or spaces then CDATA
 	var css = ''
@@ -2604,9 +2739,9 @@ svg.Element.style = function(node) {
 svg.Element.style.prototype = new svg.Element.ElementBase;
 
 // use element
-svg.Element.use = function(node) {
+svg.Element.use = function(nodeName,nodeAttributes) {
 	this.base = svg.Element.RenderedElementBase;
-	this.base(node);
+	this.base(nodeName,nodeAttributes);
 
 	this.baseSetContext = this.setContext;
 	this.setContext = function(ctx) {
@@ -2652,9 +2787,9 @@ svg.Element.use = function(node) {
 svg.Element.use.prototype = new svg.Element.RenderedElementBase;
 
 // mask element
-svg.Element.mask = function(node) {
+svg.Element.mask = function(nodeName,nodeAttributes) {
 	this.base = svg.Element.ElementBase;
-	this.base(node);
+	this.base(nodeName,nodeAttributes);
 
 	this.apply = function(ctx, element) {
 		// render as temp svg
@@ -2707,9 +2842,9 @@ svg.Element.mask = function(node) {
 svg.Element.mask.prototype = new svg.Element.ElementBase;
 
 // clip element
-svg.Element.clipPath = function(node) {
+svg.Element.clipPath = function(nodeName,nodeAttributes) {
 	this.base = svg.Element.ElementBase;
-	this.base(node);
+	this.base(nodeName,nodeAttributes);
 
 	this.apply = function(ctx) {
 		var oldBeginPath = CanvasRenderingContext2D.prototype.beginPath;
@@ -2746,9 +2881,9 @@ svg.Element.clipPath = function(node) {
 svg.Element.clipPath.prototype = new svg.Element.ElementBase;
 
 // filters
-svg.Element.filter = function(node) {
+svg.Element.filter = function(nodeName,nodeAttributes) {
 	this.base = svg.Element.ElementBase;
-	this.base(node);
+	this.base(nodeName,nodeAttributes);
 
 	this.apply = function(ctx, element) {
 		// render as temp svg
@@ -2796,9 +2931,9 @@ svg.Element.filter = function(node) {
 }
 svg.Element.filter.prototype = new svg.Element.ElementBase;
 
-svg.Element.feMorphology = function(node) {
+svg.Element.feMorphology = function(nodeName,nodeAttributes) {
 	this.base = svg.Element.ElementBase;
-	this.base(node);
+	this.base(nodeName,nodeAttributes);
 
 	this.apply = function(ctx, x, y, width, height) {
 		// TODO: implement
@@ -2806,9 +2941,9 @@ svg.Element.feMorphology = function(node) {
 }
 svg.Element.feMorphology.prototype = new svg.Element.ElementBase;
 
-svg.Element.feComposite = function(node) {
+svg.Element.feComposite = function(nodeName,nodeAttributes) {
 	this.base = svg.Element.ElementBase;
-	this.base(node);
+	this.base(nodeName,nodeAttributes);
 
 	this.apply = function(ctx, x, y, width, height) {
 		// TODO: implement
@@ -2816,9 +2951,9 @@ svg.Element.feComposite = function(node) {
 }
 svg.Element.feComposite.prototype = new svg.Element.ElementBase;
 
-svg.Element.feColorMatrix = function(node) {
+svg.Element.feColorMatrix = function(nodeName,nodeAttributes) {
 	this.base = svg.Element.ElementBase;
-	this.base(node);
+	this.base(nodeName,nodeAttributes);
 
 	var matrix = svg.ToNumberArray(this.attribute('values').value);
 	switch (this.attribute('type').valueOrDefault('matrix')) { // http://www.w3.org/TR/SVG/filters.html#feColorMatrixElement
@@ -2882,9 +3017,9 @@ svg.Element.feColorMatrix = function(node) {
 }
 svg.Element.feColorMatrix.prototype = new svg.Element.ElementBase;
 
-svg.Element.feGaussianBlur = function(node) {
+svg.Element.feGaussianBlur = function(nodeName,nodeAttributes) {
 	this.base = svg.Element.ElementBase;
-	this.base(node);
+	this.base(nodeName,nodeAttributes);
 
 	this.blurRadius = Math.floor(this.attribute('stdDeviation').numValue());
 	this.extraFilterDistance = this.blurRadius;
@@ -2906,17 +3041,17 @@ svg.Element.feGaussianBlur = function(node) {
 svg.Element.feGaussianBlur.prototype = new svg.Element.ElementBase;
 
 // title element, do nothing
-svg.Element.title = function(node) {
+svg.Element.title = function(nodeName,nodeAttributes) {
 }
 svg.Element.title.prototype = new svg.Element.ElementBase;
 
 // desc element, do nothing
-svg.Element.desc = function(node) {
+svg.Element.desc = function(nodeName,nodeAttributes) {
 }
 svg.Element.desc.prototype = new svg.Element.ElementBase;
 
-svg.Element.MISSING = function(node) {
-	svg.log('ERROR: Element \'' + node.nodeName + '\' not yet implemented.');
+svg.Element.MISSING = function(nodeName,nodeAttributes) {
+	svg.log('ERROR: Element \'' + nodeName + '\' not yet implemented.');
 }
 svg.Element.MISSING.prototype = new svg.Element.ElementBase;
 

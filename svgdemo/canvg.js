@@ -54,7 +54,7 @@ var canvg = function (target, s, opts) {
 	var ctx = target.getContext('2d');
 	svg.init(ctx);
 	
-	// svg.loadXml(s);
+	svg.loadXml();
 }
 
 // see https://developer.mozilla.org/en-US/docs/Web/API/Element.matches
