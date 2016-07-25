@@ -53,7 +53,6 @@ var canvg = function (target, s, opts) {
 
 	var ctx = target.getContext('2d');
 	svg.init(ctx);
-	
 	svg.loadXml();
 }
 

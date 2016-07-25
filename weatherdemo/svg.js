@@ -398,7 +398,7 @@ svg.Transform = function(v) {
 		var transformType = this.Type[type];
 		if (typeof transformType != 'undefined') {
 			var transform = new transformType(s);
-			transform.type = type;
+			transform.svgtype = type;
 			this.transforms.push(transform);
 		}
 	}
@@ -620,7 +620,7 @@ svg.CreateElement = function(nodeName,nodeAttributes,textValue) {
 		e = new svg.Element.MISSING(nodeName,nodeAttributes);
 	}
 
-	e.type = nodeName;
+	e.svgtype = nodeName;
 	return e;
 }
 
@@ -637,7 +637,7 @@ svg.loadXml = function(xml) {
 svg.loadXmlDoc = function() {
 	var ctx = svg.ctx;
 	
-	// var e = svg.CreateElement(dom.documentElement);
+	var e = st.root;
 	// console.log('e',e);
 	// e.root = true;
 	// e.addStylesFromStyleDefinition();
@@ -646,114 +646,9 @@ svg.loadXmlDoc = function() {
 	// 	'xmlns': 'http://www.w3.org/2000/svg',
 	// 	'version': '1.1'
 	// });
-	// e.root = true;
-	// e.addStylesFromStyleDefinition();
+	e.root = true;
+	e.addStylesFromStyleDefinition();
 
-var e = svg.CreateElement("svg", { "id": "shapeSvg", "xmlns": "http://www.w3.org/2000/svg", "version": "1.1" });
-e.root = true;
-e.addStylesFromStyleDefinition();
-var circle2 = svg.CreateElement("circle", { "cx": "100", "cy": "50", "r": "40", "stroke": "black", "stroke-width": "2", "fill": "red" });
-e.addChild(circle2);
-var rect3 = svg.CreateElement("rect", { "width": "300", "height": "100", "style": "fill:rgb(0,0,255);stroke-width:1;stroke:rgb(0,0,0)" });
-e.addChild(rect3);
-var rect4 = svg.CreateElement("rect", { "x": "50", "y": "20", "width": "150", "height": "150", "style": "fill:blue;stroke:pink;stroke-width:5;fill-opacity:0.1;stroke-opacity:0.9" });
-e.addChild(rect4);
-var rect5 = svg.CreateElement("rect", { "x": "50", "y": "20", "width": "150", "height": "150", "style": "fill:blue;stroke:pink;stroke-width:5;opacity:0.5" });
-e.addChild(rect5);
-var rect6 = svg.CreateElement("rect", { "x": "50", "y": "20", "rx": "20", "ry": "20", "width": "150", "height": "150", "style": "fill:red;stroke:black;stroke-width:5;opacity:0.5" });
-e.addChild(rect6);
-var ellipse7 = svg.CreateElement("ellipse", { "cx": "300", "cy": "80", "rx": "100", "ry": "50", "style": "fill:yellow;stroke:purple;stroke-width:2" });
-e.addChild(ellipse7);
-var ellipse8 = svg.CreateElement("ellipse", { "cx": "240", "cy": "100", "rx": "220", "ry": "30", "style": "fill:purple" });
-e.addChild(ellipse8);
-var ellipse9 = svg.CreateElement("ellipse", { "cx": "220", "cy": "70", "rx": "190", "ry": "20", "style": "fill:lime" });
-e.addChild(ellipse9);
-var ellipse10 = svg.CreateElement("ellipse", { "cx": "210", "cy": "45", "rx": "170", "ry": "15", "style": "fill:yellow" });
-e.addChild(ellipse10);
-var line11 = svg.CreateElement("line", { "x1": "0", "y1": "0", "x2": "200", "y2": "200", "style": "stroke:rgb(255,0,0);stroke-width:2" });
-e.addChild(line11);
-var polygon12 = svg.CreateElement("polygon", { "points": "200,10 250,190 160,210", "style": "fill:lime;stroke:purple;stroke-width:1" });
-e.addChild(polygon12);
-var polygon13 = svg.CreateElement("polygon", { "points": "220,10 300,210 170,250 123,234", "style": "fill:lime;stroke:purple;stroke-width:1" });
-e.addChild(polygon13);
-var polygon14 = svg.CreateElement("polygon", { "points": "100,10 40,180 190,60 10,60 160,180", "style": "fill:lime;stroke:purple;stroke-width:5;fill-rule:nonzero;" });
-e.addChild(polygon14);
-var polygon15 = svg.CreateElement("polygon", { "points": "100,10 40,180 190,60 10,60 160,180", "style": "fill:lime;stroke:purple;stroke-width:5;fill-rule:evenodd;" });
-e.addChild(polygon15);
-var polyline16 = svg.CreateElement("polyline", { "points": "0,40 40,40 40,80 80,80 80,120 120,120 120,160", "style": "fill:white;stroke:red;stroke-width:4" });
-e.addChild(polyline16);
-var path17 = svg.CreateElement("path", { "d": "M150 0 L75 200 L225 200 Z" });
-e.addChild(path17);
-var path18 = svg.CreateElement("path", { "id": "lineAB", "d": "M 100 350 l 150 -300", "stroke": "red", "stroke-width": "3", "fill": "none" });
-e.addChild(path18);
-var path19 = svg.CreateElement("path", { "id": "lineBC", "d": "M 250 50 l 150 300", "stroke": "red", "stroke-width": "3", "fill": "none" });
-e.addChild(path19);
-var path20 = svg.CreateElement("path", { "d": "M 175 200 l 150 0", "stroke": "green", "stroke-width": "3", "fill": "none" });
-e.addChild(path20);
-var path21 = svg.CreateElement("path", { "d": "M 100 350 q 150 -300 300 0", "stroke": "blue", "stroke-width": "5", "fill": "none" });
-e.addChild(path21);
-var g22 = svg.CreateElement("g", { "stroke": "black", "stroke-width": "3", "fill": "black" });
-e.addChild(g22);
-var circle23 = svg.CreateElement("circle", { "id": "pointA", "cx": "100", "cy": "350", "r": "3" });
-g22.addChild(circle23);
-var circle24 = svg.CreateElement("circle", { "id": "pointB", "cx": "250", "cy": "50", "r": "3" });
-g22.addChild(circle24);
-var circle25 = svg.CreateElement("circle", { "id": "pointC", "cx": "400", "cy": "350", "r": "3" });
-g22.addChild(circle25);
-var g26 = svg.CreateElement("g", { "font-size": "30", "font": "sans-serif", "fill": "black", "stroke": "none", "text-anchor": "middle" });
-e.addChild(g26);
-var text27 = svg.CreateElement("text", { "x": "100", "y": "350", "dx": "-30" });
-g26.addChild(text27);
-var text28 = svg.CreateElement("text", { "x": "250", "y": "50", "dy": "-10" });
-g26.addChild(text28);
-var text29 = svg.CreateElement("text", { "x": "400", "y": "350", "dx": "30" });
-g26.addChild(text29);
-var text30 = svg.CreateElement("text", { "x": "0", "y": "15", "fill": "red" });
-e.addChild(text30);
-var text31 = svg.CreateElement("text", { "x": "0", "y": "15", "fill": "red", "transform": "rotate(30 20,40)" });
-e.addChild(text31);
-var text32 = svg.CreateElement("text", { "x": "10", "y": "20", "style": "fill:red;" });
-e.addChild(text32);
-var tspan33 = svg.CreateElement("tspan", { "x": "10", "y": "45" }, "First line");
-text32.addChild(tspan33);
-var tspan34 = svg.CreateElement("tspan", { "x": "10", "y": "70" }, "Second line");
-text32.addChild(tspan34);
-var a35 = svg.CreateElement("a", { "xlink:href": "/svg/", "target": "_blank" });
-e.addChild(a35);
-var text36 = svg.CreateElement("text", { "x": "0", "y": "15", "fill": "red" });
-a35.addChild(text36);
-var g37 = svg.CreateElement("g", { "fill": "none" });
-e.addChild(g37);
-var path38 = svg.CreateElement("path", { "stroke": "red", "d": "M5 20 l215 0" });
-g37.addChild(path38);
-var path39 = svg.CreateElement("path", { "stroke": "black", "d": "M5 40 l215 0" });
-g37.addChild(path39);
-var path40 = svg.CreateElement("path", { "stroke": "blue", "d": "M5 60 l215 0" });
-g37.addChild(path40);
-var g41 = svg.CreateElement("g", { "fill": "none", "stroke": "black" });
-e.addChild(g41);
-var path42 = svg.CreateElement("path", { "stroke-width": "2", "d": "M5 20 l215 0" });
-g41.addChild(path42);
-var path43 = svg.CreateElement("path", { "stroke-width": "4", "d": "M5 40 l215 0" });
-g41.addChild(path43);
-var path44 = svg.CreateElement("path", { "stroke-width": "6", "d": "M5 60 l215 0" });
-g41.addChild(path44);
-var g45 = svg.CreateElement("g", { "fill": "none", "stroke": "black", "stroke-width": "6" });
-e.addChild(g45);
-var path46 = svg.CreateElement("path", { "stroke-linecap": "butt", "d": "M5 20 l215 0" });
-g45.addChild(path46);
-var path47 = svg.CreateElement("path", { "stroke-linecap": "round", "d": "M5 40 l215 0" });
-g45.addChild(path47);
-var path48 = svg.CreateElement("path", { "stroke-linecap": "square", "d": "M5 60 l215 0" });
-g45.addChild(path48);
-var g49 = svg.CreateElement("g", { "fill": "none", "stroke": "black", "stroke-width": "4" });
-e.addChild(g49);
-var path50 = svg.CreateElement("path", { "stroke-dasharray": "5,5", "d": "M5 20 l215 0" });
-g49.addChild(path50);
-var path51 = svg.CreateElement("path", { "stroke-dasharray": "10,10", "d": "M5 40 l215 0" });
-g49.addChild(path51);
-var path52 = svg.CreateElement("path", { "stroke-dasharray": "20,10,5,5,5,10", "d": "M5 60 l215 0" });
-g49.addChild(path52);
 
 
 
@@ -955,6 +850,21 @@ svg.Element.ElementBase = function(nodeName,nodeAttributes) {
 		return a || svg.EmptyProperty;
 	}
 
+	this.cloneNode = function(){
+		var resultNode = svg.CreateElement(this.svgtype,this.attributes);
+		//notice  子元素的复制.....
+		return resultNode;
+	}
+
+	this.setAttribute = function(name,value){
+		this.attributes[name] = new svg.Property(name,value);
+		// console.log(name,value);
+	}
+	this.getAttribute = function(name){
+		var propertyObj = this.attributes[name];
+
+		return (propertyObj.value && propertyObj.value.value) || propertyObj.value;
+	}
 	this.getHrefAttribute = function() {
 		for (var a in this.attributes) {
 			if (a == 'href' || a.match(/:href$/)) {
@@ -1039,7 +949,7 @@ svg.Element.ElementBase = function(nodeName,nodeAttributes) {
 	// }
 	this.addChild = function(childElement, create){
 		childElement.parent = this;
-		if(childElement.type != 'title'){
+		if(childElement.svgtype != 'title'){
 			this.children.push(childElement);
 		}
 	}
@@ -1934,7 +1844,7 @@ svg.Element.GradientBase = function(nodeName,nodeAttributes) {
 	this.stops = [];
 	for (var i=0; i<this.children.length; i++) {
 		var child = this.children[i];
-		if (child.type == 'stop') this.stops.push(child);
+		if (child.svgtype == 'stop') this.stops.push(child);
 	}
 
 	this.getGradient = function() {
@@ -2288,14 +2198,14 @@ svg.Element.font = function(nodeName,nodeAttributes) {
 	this.glyphs = [];
 	for (var i=0; i<this.children.length; i++) {
 		var child = this.children[i];
-		if (child.type == 'font-face') {
+		if (child.svgtype == 'font-face') {
 			this.fontFace = child;
 			if (child.style('font-family').hasValue()) {
 				svg.Definitions[child.style('font-family').value] = this;
 			}
 		}
-		else if (child.type == 'missing-glyph') this.missingGlyph = child;
-		else if (child.type == 'glyph') {
+		else if (child.svgtype == 'missing-glyph') this.missingGlyph = child;
+		else if (child.svgtype == 'glyph') {
 			if (child.arabicForm != '') {
 				this.isRTL = true;
 				this.isArabic = true;
@@ -2434,7 +2344,7 @@ svg.Element.TextElementBase = function(nodeName,nodeAttributes) {
 			if (i>0 && text[i-1]!=' ' && (i == text.length-1 || text[i+1]==' ')) arabicForm = 'initial';
 			if (typeof font.glyphs[c] != 'undefined') {
 				glyph = font.glyphs[c][arabicForm];
-				if (glyph == null && font.glyphs[c].type == 'glyph') glyph = font.glyphs[c];
+				if (glyph == null && font.glyphs[c].svgtype == 'glyph') glyph = font.glyphs[c];
 			}
 		}
 		else {
@@ -2533,7 +2443,7 @@ svg.Element.tspan = function(nodeName,nodeAttributes,textValue) {
 		if (this.children.length > 0) { return ''; }
 		return this.text;
 	}
-}
+} 
 svg.Element.tspan.prototype = new svg.Element.TextElementBase;
 
 // tref
@@ -2556,7 +2466,7 @@ svg.Element.a = function(nodeName,nodeAttributes) {
 	this.hasText = this.children.length > 0;
 	var textIndex = 0;
 	for (var i=0; i<this.children.length; i++) {
-		if (this.children[i] && this.children[i].type=="text" && this.children[i].text) {
+		if (this.children[i] && this.children[i].svgtype=="text" && this.children[i].text) {
 			this.hasText = false;
 			textIndex = i;
 		}
@@ -2763,16 +2673,16 @@ svg.Element.use = function(nodeName,nodeAttributes) {
 	this.renderChildren = function(ctx) {
 		if (element != null) {
 			var tempSvg = element;
-			if (element.type == 'symbol') {
+			if (element.svgtype == 'symbol') {
 				// render me using a temporary svg element in symbol cases (http://www.w3.org/TR/SVG/struct.html#UseElement)
 				tempSvg = new svg.Element.svg();
-				tempSvg.type = 'svg';
+				tempSvg.svgtype = 'svg';
 				tempSvg.attributes['viewBox'] = new svg.Property('viewBox', element.attribute('viewBox').value);
 				tempSvg.attributes['preserveAspectRatio'] = new svg.Property('preserveAspectRatio', element.attribute('preserveAspectRatio').value);
 				tempSvg.attributes['overflow'] = new svg.Property('overflow', element.attribute('overflow').value);
 				tempSvg.children = element.children;
 			}
-			if (tempSvg.type == 'svg') {
+			if (tempSvg.svgtype == 'svg') {
 				// if symbol or svg, inherit width/height from me
 				if (this.attribute('width').hasValue()) tempSvg.attributes['width'] = new svg.Property('width', this.attribute('width').value);
 				if (this.attribute('height').hasValue()) tempSvg.attributes['height'] = new svg.Property('height', this.attribute('height').value);

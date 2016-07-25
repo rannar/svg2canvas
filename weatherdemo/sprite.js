@@ -1,7 +1,4 @@
-(function (data) {
-    /**
-     * 过滤空格
-     */
+    var data = basedata;
     if (!String.prototype.trim) {
         String.prototype.trim = function() {
             return this.replace(/^\s+/, "").replace(/\s+$/, "");
@@ -49,16 +46,6 @@
     
     /*
      * <p>
-     * document.createElementNS的快捷方式
-     * </p>
-     * @method createTag
-     */
-    st.createTag = function(tag) {
-        return document.createElementNS("http://www.w3.org/2000/svg", tag);
-    };
-    
-    /*
-     * <p>
      * DOM根节点(svg)的初始化
      * </p>
      * @method initRoot
@@ -66,17 +53,24 @@
     st.initRoot = function() {
         var d = data,
             rect = d.Ft;
-        st.root = st.createTag('svg');
-        st.root.setAttribute('width', 960);
-        st.root.setAttribute('height', 540);
+        // st.root = st.createTag('svg');
+        // st.root.setAttribute('width', 960);
+        // st.root.setAttribute('height', 540);
     
-        st.root.setAttribute('viewBox', rect.xi + ' ' + rect.yi + ' ' + d.Fw + ' ' + d.Fh);
-        st.scene = document.createElement('div');
-        st.scene.style.position = 'relative';
-        st.scene.style.left = '0';
-        st.scene.style.top = '0';
-        st.scene.appendChild(st.root);
-        document.body.appendChild(st.scene);
+        // st.root.setAttribute('viewBox', rect.xi + ' ' + rect.yi + ' ' + d.Fw + ' ' + d.Fh);
+
+        st.root = svg.CreateElement('svg',{
+            width:960,
+            height:540,
+            viewBox: rect.xi + ' ' + rect.yi + ' ' + d.Fw + ' ' + d.Fh
+        })
+
+        // st.scene = document.createElement('div');
+        // st.scene.style.position = 'relative';
+        // st.scene.style.left = '0';
+        // st.scene.style.top = '0';
+        // st.scene.appendChild(st.root);
+        // document.body.appendChild(st.scene);
     };
     
     /*
@@ -87,10 +81,11 @@
      * @method initDefs
      */
     st.initDefs = function() {
-        var g = st.createTag('g');
-        var defs = st.createTag('defs');
-        g.appendChild(defs);
-        st.root.appendChild(g);
+        var g = svg.CreateElement('g');
+        var defs = svg.CreateElement('defs');
+
+        g.addChild(defs);
+        st.root.addChild(g);
     
         st.defs = defs;
     };
@@ -138,29 +133,43 @@
      * @param {Object} placeObject数据 
      */
     st.processFont = function(j) {
-        var font = st.createTag('font');
-        font.setAttribute('id', 'ft' + j.id);
-        font.setAttribute("horiz-adv-x", 1024);
-    
-        var fontFace = st.createTag('font-face');
-        fontFace.setAttribute('font-family', 'ft' + j.id);
-        fontFace.setAttribute("line-height", "1.15");
-        fontFace.setAttribute("units-per-em", j.us);
-        fontFace.setAttribute("font-weight", "bold");
-        font.appendChild(fontFace);
+        var font = svg.CreateElement('font',{
+            'id': 'ft' + j.id,
+            "horiz-adv-x": 1024
+        })
+        // var font = st.createTag('font');
+        // font.setAttribute('id', 'ft' + j.id);
+        // font.setAttribute("horiz-adv-x", 1024);
+        
+        var fontFace = svg.CreateElement('font-face',{
+            'font-family': 'ft' + j.id,
+            "line-height": "1.15",
+            "units-per-em": j.us,
+            "font-weight": "bold"
+        });
+        // var fontFace = st.createTag('font-face');
+        // fontFace.setAttribute('font-family', 'ft' + j.id);
+        // fontFace.setAttribute("line-height", "1.15");
+        // fontFace.setAttribute("units-per-em", j.us);
+        // fontFace.setAttribute("font-weight", "bold");
+        font.addChild(fontFace);
     
         for (var i = 0, k = j.fo.length; i < k; i++) {
             var glyphObject = j.fo[i];
-            var glyph = st.createTag('glyph');
-            glyph.setAttribute('d', glyphObject.da);
-            glyph.setAttribute('unicode', glyphObject.co);
+            // var glyph = st.createTag('glyph');
+            // glyph.setAttribute('d', glyphObject.da);
+            // glyph.setAttribute('unicode', glyphObject.co);
+            var glyph = svg.CreateElement('glyph',{
+                'd':glyphObject.da,
+                'unicode': glyphObject.co
+            });
             if ('ad' in glyphObject) {
                 glyph.setAttribute('horiz-adv-x', glyphObject.ad);
             }
-            font.appendChild(glyph);
+            font.addChild(glyph);
         }
     
-        st.defs.appendChild(font);
+        st.defs.addChild(font);
     };
     
     /*
@@ -172,9 +181,12 @@
      * @param {Object} placeObject数据 
      */
     st.processText = function (j) {
-        var G = st.createTag('g');
-        var defs = st.createTag('defs');
-        var g = st.createTag('g');
+        // var G = st.createTag('g');
+        // var defs = st.createTag('defs');
+        // var g = st.createTag('g');
+        var G = svg.CreateElement('g');
+        var defs = svg.CreateElement('defs');
+        var g = svg.CreateElement('g');
 		
         if ('rs' in j) {
             for (var i = 0; j.rs[i]; i++) {
@@ -258,6 +270,7 @@
         }
         G.appendChild(defs);
         G.appendChild(g);
+        // G.setAttribute('type', 'text');
         G.setAttribute('type', 'text');
         st.defineShapes[j.id] = G;
     };
@@ -271,12 +284,16 @@
      * @param {Object} placeObject数据 
      */
     st.processSprite = function(j) {
-        var g = st.createTag('g');
-        var defs = st.createTag('defs');
-        var childsHolder = st.createTag('g');
+        // var g = st.createTag('g');
+        // var defs = st.createTag('defs');
+        // var childsHolder = st.createTag('g');
+        
+        var g = svg.CreateElement('g');
         g.setAttribute('type', 'sprite');
-        g.appendChild(defs);
-        g.appendChild(childsHolder);
+        var defs = svg.CreateElement('defs');
+        var childsHolder = svg.CreateElement('g');
+        g.addChild(defs);
+        g.addChild(childsHolder);
         st.defineShapes[j.id] = g;
     };
     
@@ -289,13 +306,16 @@
      * @param {Object} placeObject数据 
      */
     st.processButton = function(tag) {
-        var button = st.createTag('g');
-        var defs = st.createTag('defs');
-        var childsHolder = st.createTag('g');
+        var button = svg.CreateElement('g',{'type':'button'});
+        var defs = svg.CreateElement('defs');
+        var childsHolder = svg.CreateElement('g');
+        // var button = st.createTag('g');
+        // var defs = st.createTag('defs');
+        // var childsHolder = st.createTag('g');
         
-        button.setAttribute('type', 'button');
-        button.appendChild(defs);
-        button.appendChild(childsHolder);
+        // button.setAttribute('type', 'button');
+        button.addChild(defs);
+        button.addChild(childsHolder);
         
         st.defineShapes[tag.id] = button;
     };
@@ -347,7 +367,9 @@
         */
         var addGradient = function(fillObject, fid, str) {
             if (document.getElementById(fid)) return fid;
-            var G = st.createTag(str);
+            // var G = st.createTag(str);
+            var G = svg.CreateElement(str);
+
             for (var key in fillObject) {
                 if ((typeof fillObject[key] == 'object') || (key == 'type')) {
                     continue;
@@ -358,7 +380,8 @@
             var stops = fillObject.sp;
             for (var i = 0, j = stops.length; i < j; i++) {
                 var o = stops[i];
-                var s = st.createTag('stop');
+                // var s = st.createTag('stop');
+                var s = svg.CreateElement('stop');
                 for (var k in o) {
                     s.setAttribute(k, o[k]);
                 }
@@ -367,7 +390,7 @@
             }
     
             G.setAttribute('id', fid);
-            st.defs.appendChild(G);
+            st.defs.addChild(G);
             return fid;
         };
         
@@ -385,7 +408,7 @@
 			
             if (document.getElementById(fid)) return fid;
 		
-            var pattern = st.createTag('pattern');
+            var pattern = svg.CreateElement('pattern');
 //			console.log(pattern);
             for (var key in fillObject) {
                 if ((typeof fillObject[key] == 'object') || (key == 'type')) {
@@ -395,7 +418,8 @@
                 pattern.setAttribute(key, fillObject[key]);
             }
     
-            var image = st.createTag('image');
+            // var image = st.createTag('image');
+            var image = svg.CreateElement('image');
             for (var key in fillObject.image){
                 
                 if (key == 'width' || key == 'height'){
@@ -403,7 +427,7 @@
                 }
 
                 if (key == 'xlink:href'){
-                    image.setAttributeNS("http://www.w3.org/1999/xlink", "href", fillObject.image[key]);
+                    image.setAttribute("href", fillObject.image[key]);
                     continue;
                 }
                 // image.setAttribute(key, fillObject.image[key])
@@ -411,9 +435,9 @@
 
             }
     
-            pattern.appendChild(image);
+            pattern.addChild(image);
             pattern.setAttribute('id', fid);
-            st.defs.appendChild(pattern);
+            st.defs.addChild(pattern);
             return fid;
         };
     
@@ -506,18 +530,22 @@
         };
     
         return function(j) {
-            var g = st.createTag('g');
-            var defs = st.createTag('defs');
-            var childsHolder = st.createTag('g');
-            g.appendChild(defs);
-            g.appendChild(childsHolder);
+            // var g = st.createTag('g');
+            // var defs = st.createTag('defs');
+            // var childsHolder = st.createTag('g');
+            var g = svg.CreateElement('g');
+            var defs = svg.CreateElement('defs');
+            var childsHolder = svg.CreateElement('g');
+            g.addChild(defs);
+            g.addChild(childsHolder);
             
             var p = j.pt;
             
             if (p) { 
                 for (var i = 0, k = p.length; i < k; i++) {
                     var pn = p[i];
-                    var path = st.createTag('path');
+                    // var path = st.createTag('path');
+                    var path = svg.CreateElement('path');
                     path.setAttribute('d', pn.da);
         
                     if (typeof pn['fi'] !== 'undefined') {
@@ -537,7 +565,7 @@
                         var lineIndex = pn['ln'];
                         setLine(path, lineData, shapeId, lineIndex);
                     }
-                    childsHolder.appendChild(path);
+                    childsHolder.addChild(path);
                 }
             }
             g.setAttribute('type', 'shape');
@@ -582,7 +610,7 @@
         this.base = 0;
         this.filters = filters;
         this.element = st.createTag('filter'); // 创建filter节点
-        this.defs.appendChild(this.element); // 插入filter节点
+        this.defs.addChild(this.element); // 插入filter节点
         
         /*
          * <p>
@@ -593,14 +621,19 @@
          */
         this.Rgb = function(in1) {
             var rgb = ['R', 'G', 'B'];
-            var fc = st.createTag('feComponentTransfer');
+            // var fc = st.createTag('feComponentTransfer');
+            var fc = svg.CreateElement('feComponentTransfer');
             fc.setAttribute('in', in1);
-            this.element.appendChild(fc);
+            this.element.addChild(fc);
             for (var i = 0; i < rgb.length; i ++) {
-                var ff = st.createTag('feFunc' + rgb[i]);
-                ff.setAttribute('type', 'linear');
-                ff.setAttribute('slope', 0);
-                fc.appendChild(ff);
+                // var ff = st.createTag('feFunc' + rgb[i]);
+                // ff.setAttribute('type', 'linear');
+                // ff.setAttribute('slope', 0);
+                var ff = svg.CreateElement('feFunc' + rgb[i],{
+                    'type': 'linear',
+                    'slope': 0
+                })
+                fc.addChild(ff);
             }
             
             return this;
@@ -618,25 +651,36 @@
         this.Rgba = function(slope, color, result) {
             var rgb = ['R', 'G', 'B'];
             var code = [color.r, color.g, color.b, color.a];
-            var fc = st.createTag('feComponentTransfer');
-            fc.setAttribute('result', result);
-            this.element.appendChild(fc);
+            // var fc = st.createTag('feComponentTransfer');
+            // fc.setAttribute('result', result);
+            var fc = svg.CreateElement('feComponentTransfer',{
+                'result': result
+            })
+            this.element.addChild(fc);
             for (var i = 0; i < rgb.length; i ++) {
-                var ff = st.createTag('feFunc' + rgb[i]);
-                ff.setAttribute('type', 'linear');
-                ff.setAttribute('intercept', code[i]);
-                
-                
-                ff.setAttribute('Ue', 0);
+                // var ff = st.createTag('feFunc' + rgb[i]);
+                // ff.setAttribute('type', 'linear');
+                // ff.setAttribute('intercept', code[i]);
+                // ff.setAttribute('Ue', 0);
+                var ff = svg.CreateElement('feFunc' + rgb[i],{
+                    type: 'linear',
+                    'intercept': code[i],
+                    'Ue': 0
+                })
               
-                fc.appendChild(ff);
+                fc.addChild(ff);
             }
             
-            var ffa = st.createTag('feFuncA');
-            ffa.setAttribute('type', 'linear');
-            ffa.setAttribute('slope', slope);
-            ffa.setAttribute('xh', 0);
-            fc.appendChild(ffa);
+            // var ffa = st.createTag('feFuncA');
+            // ffa.setAttribute('type', 'linear');
+            // ffa.setAttribute('slope', slope);
+            // ffa.setAttribute('xh', 0);
+            var ffa = svg.CreateElement('feFuncA',{
+                'type': 'linear',
+                'slope': slope,
+                'xh': 0
+            })
+            fc.addChild(ffa);
             return this;
         };
         
@@ -650,12 +694,16 @@
          * @param {int}
          */
         this.Fo = function(x, y, result) {
-            var fo = st.createTag('feOffset');
-            fo.setAttribute('dx', x);
-            fo.setAttribute('dy', y);
+            // var fo = st.createTag('feOffset');
+            // fo.setAttribute('dx', x);
+            // fo.setAttribute('dy', y);
+            var fo = svg.CreateElement('feOffset',{
+                'dx': x,
+                'dy': y
+            });
             if (result !== false)
                 fo.setAttribute('result', result);
-            this.element.appendChild(fo);
+            this.element.addChild(fo);
             
             return this;
         };
@@ -669,9 +717,12 @@
          * @param {int}
          */
         this.Fg = function(x, y) {
-            var fg = st.createTag('feGaussianBlur');
-            fg.setAttribute('stdDeviation', [x, y].join(' '));
-            this.element.appendChild(fg);
+            // var fg = st.createTag('feGaussianBlur');
+            // fg.setAttribute('stdDeviation', [x, y].join(' '));
+            var fg = svg.CreateElement('feGaussianBlur',{
+                'stdDeviation': [x, y].join(' ')
+            })
+            this.element.addChild(fg);
             
             return this;
         };
@@ -686,7 +737,8 @@
          * @param {int}
          */
         this.Com = function(operator, in1, in2, k2, k3, result) {
-            var composite = st.createTag('feComposite');
+            // var composite = st.createTag('feComposite');
+            var composite = svg.CreateElement('feComposite');
             if (in1 !== false)
                 composite.setAttribute('in', in1);
             if (in2 !== false)
@@ -701,7 +753,7 @@
             if (result) {
                 composite.setAttribute('result', result);
             }
-            this.element.appendChild(composite);
+            this.element.addChild(composite);
             
             return this;
         };
@@ -716,9 +768,12 @@
          */
         this.Shadow = function(filter) {
             if (filter.op & 0x80) {
-                var ff = st.createTag('feFlood');
-                ff.setAttribute('result', ++ this.base);
-                this.element.appendChild(ff);
+                // var ff = st.createTag('feFlood');
+                // ff.setAttribute('result', ++ this.base);
+                var ff = svg.CreateElement('feFlood',{
+                    'result': ++ this.base
+                })
+                this.element.addChild(ff);
             }
             
             if (filter.op & 0x80) {
@@ -765,12 +820,12 @@
          * @param {object} filter数据对象
          */
         this.Blur = function(filter) {
-            var blurElement = st.createTag('feGaussianBlur');
+            var blurElement = svg.CreateElement('feGaussianBlur');
             blurElement.setAttribute('in', baseAdapter(this.base));
             blurElement.setAttribute('result', ++ this.base);
             blurElement.setAttribute('stdDeviation', [filter.bx, filter.by].join(' '));
             
-            this.element.appendChild(blurElement);
+            this.element.addChild(blurElement);
         };
         
         /*
@@ -787,9 +842,12 @@
             //.Rgba(filter.str, filter.color, ++ this.base)
             //.Com('over', baseAdapter(this.base - 1), this.base, ++ this.base);
             if (filter.op & 0x80) {
-                var ff = st.createTag('feFlood');
-                ff.setAttribute('result', ++ this.base);
-                this.element.appendChild(ff);
+                // var ff = st.createTag('feFlood');
+                // ff.setAttribute('result', ++ this.base);
+                var ff = svg.CreateElement('feFlood',{
+                    'result': ++ this.base
+                })
+                this.element.addChild(ff);
             }
             if (filter.op & 0x80) {
                 this.Rgb(baseAdapter(this.base - 1));
@@ -908,6 +966,7 @@
             while (this.element.firstChild) {
                 this.element.removeChild(this.element.firstChild);
             }
+            // this.element.children = [];
             this.base = 0;
             this.filters = filters;
             this.init();
@@ -1344,9 +1403,11 @@
     st.sprite.prototype.replaceShape = function(j) {
 
 	//可在初始化的时候调用，也可在afterRender的时候调用.为一帧中的若干个动作
-
+        console.log('this.par:',this.par);
         var parentNode = this.par.firstChild.nextSibling;  
+        // var parentNode = this.par.children[1];  
        
+       console.log('parentNode:',parentNode);
         var nshape = this.createShape(j);
 //		console.log(nshape);
 		var depth = j.d;
@@ -1357,7 +1418,8 @@
 			
             var oldNode = document.getElementById(oldNodeId);
             
-			 	
+			 console.log('oldNode:',oldNode);
+             console.log('svg.defin',svg.Definitions);
 
             if (oldNodeId == nshape.id) {
 			
@@ -1388,8 +1450,7 @@
                 var nodeId = this.par.getAttribute('id') + ':' + this.lastDepth + ':' + this.depths[this.lastDepth]; //上一帧
 				
                 var node = document.getElementById(nodeId);
-                
-				if(node) {
+                if(node) {
                 //如果depth相同的节点下面是否别的节点
                 var sibling = node.nextSibling;
                 }
@@ -1401,16 +1462,18 @@
 					
                 } else {
 				
-                    parentNode.appendChild(nshape);
+                    parentNode.addChild(nshape);
 					
                 }
             } else {
-           
                 var firstNode = parentNode.firstChild;
+                // console.log('parentNode:',parentNode);
+                // var firstNode = parentNode && parentNode.children && parentNode.children[0];
+                // console.log('parentNode:',parentNode);
                 if (firstNode) {
 					parentNode.insertBefore(nshape, firstNode);
                 } else {
-                    parentNode.appendChild(nshape);
+                    // parentNode.addChild(nshape);
                 }
             }
         }
@@ -1507,6 +1570,12 @@
 			if(shape.getAttribute('type')) {
             var type = shape.getAttribute('type');
             var method = map[type];
+            // console.log('=================map',map);
+            // console.log('=================type',type);
+            // console.log('=================method',method);
+            // console.log('=================shape',shape);
+            // console.log('=================placeObject',placeObject);
+            // console.log('this',this);
             this[method](shape, placeObject);
 			}
         }
@@ -1524,10 +1593,11 @@
 
         var mx = placeObject['ma'];
 
-        if (shape.nodeName.toLowerCase() == 'g') {
+        if (shape.svgtype.toLowerCase() == 'g') {
             // move shape
             var rs = shape.firstChild.nextSibling;
-            rs.setAttribute('transform', 'matrix(' + mx + ')');
+            // var rs = shape.children[1];
+            rs && rs.setAttribute('transform', 'matrix(' + mx + ')');
         } else {
             // move mask
             var paths = shape.childNodes;
@@ -1578,6 +1648,7 @@
         // 递归调用
         this.sprites[key].showFrame();
         shape.firstChild.nextSibling.setAttribute('transform', 'matrix(' + mx + ')');
+        // shape.children[1] && shape.children[1].setAttribute('transform', 'matrix(' + mx + ')');
     };
     
     /*
@@ -1690,7 +1761,7 @@
                         s.style['opacity'] = 0;
                     }
                     
-                    p.appendChild(s);
+                    p.addChild(s);
                     
                     var rec = states[type][i][1];
                     if ('opacity' in rec) {
@@ -2003,7 +2074,7 @@
             } else {
                 var selfGradient = topGradient.cloneNode(true);
                 selfGradient.setAttribute('id', selfGradientId);
-                defs.appendChild(selfGradient);
+                defs.addChild(selfGradient);
             }
             
             var topStops = topGradient.childNodes, selfStops = selfGradient.childNodes;
@@ -2191,7 +2262,7 @@
         var paths = shape.firstChild.nextSibling.childNodes;
         for (var i = 0, j = paths.length; i < j; i++) {
             var p = paths[i].cloneNode(true);
-            cp.appendChild(p);
+            cp.addChild(p);
         }
     
         cp.setAttribute('clippathunits', 'userSpaceOnUse');
@@ -2261,18 +2332,21 @@
     */
 
     st.start = function() {
-        var root = st.createTag('g'), d = data;
+        var root = svg.CreateElement('g'), d = data;
         st.setBackground(st.root);
         root.setAttribute('id', '0');
-        root.appendChild(st.createTag('defs'));
-        root.appendChild(st.createTag('g'));
-        st.root.appendChild(root);
+        root.addChild(svg.CreateElement('defs'));
+        root.addChild(svg.CreateElement('g'));
+        st.root.addChild(root);
 		//console.log(root);
         var mainMovie = new st.sprite(d.Mf, root);
 
-
+        canvg('canvas');
+            
         st.timer = setTimeout(function() {
             mainMovie.showFrame();
+            svg.loadXml();
+
             st.timer = setTimeout(arguments.callee, st.interval);
         }, st.interval);
 
@@ -2367,7 +2441,7 @@
     st.setBackground = function(root) {
         var d = data;
 		
-        var bg = st.createTag('rect');
+        var bg = svg.CreateElement('rect');
         var bound = {
             x: d.Ft.xi,
             y: d.Ft.yi,
@@ -2378,9 +2452,8 @@
         for (var k in bound) {
             bg.setAttribute(k, bound[k]);
         }
-        root.appendChild(bg);
+        root.addChild(bg);
     };
     
     st.init();
     st.start();
-}(data));
