@@ -502,8 +502,6 @@ svg.Property.prototype.getDefinition = function() {
 }
 
 svg.Property.prototype.isUrlDefinition = function() {
-	// console.log('this.value',this.name,this.value);
-	console.log('this.value',this.value);
 	return this.value.indexOf('url(') == 0
 }
 
@@ -651,7 +649,7 @@ svg.loadXmlDoc = function() {
 	e.addStylesFromStyleDefinition();
 
 
-
+	console.log(e);
 
 
 	var mapXY = function(p) {
@@ -737,12 +735,12 @@ svg.loadXmlDoc = function() {
 			if (typeof svg.opts['renderCallback'] == 'function') svg.opts['renderCallback'](svg);
 		}
 	}
-
-	var waitingForImages = true;
-	if (svg.ImagesLoaded()) {
-		waitingForImages = false;
-		draw();
-	}
+	draw();
+	// var waitingForImages = true;
+	// if (svg.ImagesLoaded()) {
+	// 	// waitingForImages = false;
+	// 	draw();
+	// }
 	// svg.intervalID = setInterval(function() {
 	// 	var needUpdate = false;
 
@@ -845,14 +843,21 @@ svg.Element.ElementBase = function(nodeName,nodeAttributes) {
 	// get or create attribute
 	this.attribute = function(name, createIfNotExists) {
 		var a = this.attributes[name];
+		var createIfNotExists = true;
 		if (a != null) return a;
 
 		if (createIfNotExists == true) { a = new svg.Property(name, ''); this.attributes[name] = a; }
+
 		return a || svg.EmptyProperty;
 	}
 
 	this.cloneNode = function(){
-	    var resultNode = svg.CreateElement(this.svgtype,this.attributes);
+		var attrs = {};
+		for(var i in this.attributes){
+			attrs[i] = this.getAttribute(i);
+		}
+		console.log(attrs);
+	    var resultNode = svg.CreateElement(this.svgtype,attrs);
 	    for(var i = 0; i < this.children.length; i++){
 	        resultNode.children[i] = this.children[i].cloneNode();
 
@@ -865,7 +870,7 @@ svg.Element.ElementBase = function(nodeName,nodeAttributes) {
 		this.attributes[name] = new svg.Property(name,value);
 	}
 	this.getAttribute = function(name){
-		var propertyObj = this.attribute(name,true);
+		var propertyObj = this.attribute(name);
 		return propertyObj.value;
 	}
 	this.getHrefAttribute = function() {
@@ -939,6 +944,7 @@ svg.Element.ElementBase = function(nodeName,nodeAttributes) {
 
 	// base render children
 	this.renderChildren = function(ctx) {
+		// console.log("renderChildren");
 		for (var i=0; i<this.children.length; i++) {
 			this.children[i].render(ctx);
 		}
@@ -995,16 +1001,24 @@ svg.Element.ElementBase = function(nodeName,nodeAttributes) {
 		// 	var nodeName = normalizeAttributeName(attribute.nodeName);
 		// 	this.attributes[nodeName] = new svg.Property(nodeName, attribute.value);
 		// }
-		for(var nodeName in nodeAttributes){
-			var nodeValue = nodeAttributes[nodeName];
-			var nodeName = normalizeAttributeName(nodeName);
-			this.attributes[nodeName] = new svg.Property(nodeName,nodeValue);
+		// for(var nodeName in nodeAttributes){
+		// 	var nodeValue = nodeAttributes[nodeName];
+		// 	var nodeName = normalizeAttributeName(nodeName);
+		// 	this.attributes[nodeName] = new svg.Property(nodeName,nodeValue);
+		// }
+
+		for(var nodeName1 in nodeAttributes){
+			var nodeValue1 = nodeAttributes[nodeName1];
+			var nodeName1 = normalizeAttributeName(nodeName1);
+			this.attributes[nodeName1] = new svg.Property(nodeName1,nodeValue1);
 		}
 
 		this.addStylesFromStyleDefinition();
 
 		// add inline styles
+		console.log('add inline styles:',this.attribute('style').hasValue())
 		if (this.attribute('style').hasValue()) {
+			console.log(this.attribute('style'));
 			var styles = this.attribute('style').value.split(';');
 			for (var i=0; i<styles.length; i++) {
 				if (svg.trim(styles[i]) != '') {
@@ -1421,12 +1435,6 @@ svg.Element.path = function(nodeName,nodeAttributes) {
 
 	// var d = this.attribute('d').value;
 	var d = this.attribute('d',true).value;
-	console.log('d',d)
-	this.setAttribute('d', 'M-1212,-599L1212 -599L1212 599L-1212 599L-1212 -599');
-	d = 'M-1212,-599L1212 -599L1212 599L-1212 599L-1212 -599';
-	// console.log('d',d);
-	// d = d.value;
-	// console.log(this.getAttribute('d'));
 	// TODO: convert to real lexer based on http://www.w3.org/TR/e1/paths.html#PathDataBNF
 	d = d.replace(/,/gm,' '); // get rid of all commas
 	// As the end of a match can also be the start of the next match, we need to run this replace twice.
@@ -2523,14 +2531,14 @@ svg.Element.image = function(nodeName,nodeAttributes) {
 	var href = this.getHrefAttribute().value;
 	if (href == '') { return; }
 	var isSvg = href.match(/\.svg$/)
-
 	svg.Images.push(this);
+	console.log('',svg.Images);
 	this.loaded = false;
 	if (!isSvg) {
 		this.img = document.createElement('img');
 		if (svg.opts['useCORS'] == true) { this.img.crossOrigin = 'Anonymous'; }
 		var self = this;
-		this.img.onload = function() { self.loaded = true; }
+		this.img.onload = function() { self.loaded = true; console.log('喜大普奔 loaded loaded loaded')}
 		this.img.onerror = function() { svg.log('ERROR: image "' + href + '" not found'); self.loaded = true; }
 		this.img.src = href;
 	}

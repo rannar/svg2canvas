@@ -41,7 +41,7 @@
         st.initShapes();
     
         st.interval = Math.floor(1000 / d.Fr);
-//		console.log( st.interval);
+//      console.log( st.interval);
     };
     
     /*
@@ -188,14 +188,14 @@
         var G = svg.CreateElement('g');
         var defs = svg.CreateElement('defs');
         var g = svg.CreateElement('g');
-		
+        
         if ('rs' in j) {
             for (var i = 0; j.rs[i]; i++) {
                 var r = j.rs[i];
                 // html text
                 if (j.tt == "html") {
                     var bound = j.bd;
-					
+                    
                     var textNode = document.createTextNode(r.tx);
                     var text_span = document.createElement('span');
                     text_span.style['fontSize'] = r.fs + 'px';
@@ -232,10 +232,10 @@
                         lastSpan = text_span;
                     }
                 } else {
-					
+                    
                     var text = st.createTag('text');
                     if (r.psd === true) {
-						
+                        
                         var s = '';
                         for (var m = 0,
                             n = r.tx.length; m < n; m++) {
@@ -243,7 +243,7 @@
                         }
                         r.tx = s;
                     }
-					
+                    
                     var textNode = document.createTextNode(r.tx);
                     text.appendChild(textNode);
                     if (r.b) {
@@ -263,7 +263,7 @@
                     text.setAttribute('y', r.y);
                     text.setAttribute('fill-rule', "nonzero");
                     text.setAttribute("style", "white-space:pre");
-					
+                    
                     text.setAttribute('transform', j.tf);
                     g.appendChild(text);
                 }
@@ -285,7 +285,6 @@
      * @param {Object} placeObject数据 
      */
     st.processSprite = function(j) {
-        console.log('=========== processSprite',j);
         // var g = st.createTag('g');
         // var defs = st.createTag('defs');
         // var childsHolder = st.createTag('g');
@@ -298,7 +297,6 @@
         g.addChild(childsHolder);
         st.defineShapes[j.id] = g;
 
-        console.log('=========== processSprite',st.defineShapes);
     };
     
     /*
@@ -322,7 +320,6 @@
         button.addChild(childsHolder);
         
         st.defineShapes[tag.id] = button;
-        console.log('processButton',st.defineShapes,tag.id,st.defineShapes[tag.id]);
     };
     
     /*
@@ -334,7 +331,6 @@
      * @param {Object} placeObject数据 
      */
     st.processShape = (function() {
-        console.log('processShape');
         /*
         * <p>
         * 添加线性渐变节点
@@ -410,37 +406,42 @@
         * @private
         */
         var addImage = function(fillObject, fid) {
-			
-			
-            if (document.getElementById(fid)) return fid;
-		
-            var pattern = svg.CreateElement('pattern');
-//			console.log(pattern);
+            
+            // if (document.getElementById(fid)) return fid;
+        
+            var pattern = svg.CreateElement('pattern',{
+                width: 400,
+                height: 500
+            });
+//          console.log(pattern);
             for (var key in fillObject) {
                 if ((typeof fillObject[key] == 'object') || (key == 'type')) {
                     continue;
                 }
-//				console.log(key);
+//              console.log(key);
                 pattern.setAttribute(key, fillObject[key]);
             }
     
             // var image = st.createTag('image');
-            var image = svg.CreateElement('image');
-            console.log('image:',image);
-            for (var key in fillObject.image){
+            var image = svg.CreateElement('image',{
+                "href":  fillObject.image['xlink:href'],
+                "width":  fillObject.image['width'] + 'px',
+                "height": fillObject.image['height'] + 'px'
+            });
+            // for (var key in fillObject.image){
                 
-                if (key == 'width' || key == 'height'){
-                    image.setAttribute(key,fillObject.image[key] + 'px');
-                }
+            //     if (key == 'width' || key == 'height'){
+            //         image.setAttribute(key,fillObject.image[key] + 'px');
+            //     }
 
-                if (key == 'xlink:href'){
-                    image.setAttribute("href", fillObject.image[key]);
-                    continue;
-                }
-                // image.setAttribute(key, fillObject.image[key])
-                image.setAttribute("href",fillObject.image['xlink:href']);
+            //     if (key == 'xlink:href'){
+            //         image.setAttribute("href", fillObject.image[key]);
+            //         continue;
+            //     }
+            //     // image.setAttribute(key, fillObject.image[key])
+            //     image.setAttribute("href",fillObject.image['xlink:href']);
 
-            }
+            // }
     
             pattern.addChild(image);
             pattern.setAttribute('id', fid);
@@ -462,16 +463,16 @@
         */
         var setColor = function(path, fillObject, shapeId, colorIndex) {
             var type = fillObject.tp;
-			
+            
             if (type == 1) {
                 
-				console.log('======= path',path);
+                console.log('======= path',path);
                 path.setAttribute('fill', fillObject.c);
                 path.setAttribute('fill-opacity', (typeof fillObject['fill-opacity'] == 'undefined') ? 1 : fillObject['fill-opacity']);
             } else {
-				
+                
                 var fid = 'f' + shapeId + ':' + colorIndex;
-				
+                
                 var cid = '';
                 switch (type) {
                 case 2:
@@ -489,7 +490,7 @@
                     break;
                 }
                 path.setAttribute("fill", "url(#" + cid + ")");
-                debugger;
+                // debugger;
             }
         };
         
@@ -513,7 +514,7 @@
     
             if ('fi' in lineObject) {
                 var type = lineObject.fi.tp;
-			
+            
                 var lid = 'l' + shapeId + ':' + lineIndex;
                 var cid = '';
                 
@@ -579,7 +580,6 @@
             }
             g.setAttribute('type', 'shape');
             st.defineShapes[j.id] = g;
-			console.log('============ shape =============',st.defineShapes);
         };
     })();
     
@@ -954,7 +954,6 @@
          * @method init
          */
         this.init = function() {
-            console.log('初始化 设置filter的根节点');
             var rect = this.filters.rt;
             var record = this.filters.rc;
             
@@ -1018,14 +1017,14 @@
         this.init();
     };
 
-	var inArray = function(element, arr) {
-		for(var i=0; i<arr.length; i++) {
-			if (arr[i]==element) {
-				return true;
-			}
-		}
-		return false;
-	}
+    var inArray = function(element, arr) {
+        for(var i=0; i<arr.length; i++) {
+            if (arr[i]==element) {
+                return true;
+            }
+        }
+        return false;
+    }
     
     /*
     * <p>
@@ -1037,7 +1036,7 @@
     * @param {Object} placeObject数据
     * @param {Object} dom element 该动画所在的DOM节点（父节点）
     */
-	
+    
 
     st.sprite = function(j, par) {
         // 构造函数中把placeObject集合拆成单独的帧 
@@ -1047,181 +1046,180 @@
         this.arrayIndex = 0;
         this.frame = 0;
         this.par = par;
-		this.firstFrame = null;
-		this.diff = null;
-		this.pIdArr = [];
+        this.firstFrame = null;
+        this.diff = null;
+        this.pIdArr = [];
       
-		if(j==data.Mf) {
-			this.diff = "Mf";
-		} else {
-			this.diff = "Tag";
-		}
+        if(j==data.Mf) {
+            this.diff = "Mf";
+        } else {
+            this.diff = "Tag";
+        }
         // 整理成帧数组
         this.frames = [];
         var frame = [];
-		//设置临时数组
-		
-		var tempArr = [];
-		var removeObj = [];
+        //设置临时数组
+        
+        var tempArr = [];
+        var removeObj = [];
         var currentDepths = [];
-		var removeObjLater = [];
-		var removeObjDepths = []
+        var removeObjLater = [];
+        var removeObjDepths = []
         //作为sort的参数,使其可以按照key的数字大小进行排列
-		function sortNumber(a,b) {
-			return a - b
-		}
+        function sortNumber(a,b) {
+            return a - b
+        }
 
-	    // 可将传入的对象按depth的大小生成一个数组
-		
+        // 可将传入的对象按depth的大小生成一个数组
+        
         function createArrByDepth(obj) {
-			var arr = [], arrSorted = [];
-			for(var key in obj) {
-				arr.push(key);
-			}
-			arr.sort(sortNumber);
-			for(var i=0; i<arr.length; i++) {
-				arrSorted.push(obj[arr[i]]);
-			}
-			return arrSorted;
+            var arr = [], arrSorted = [];
+            for(var key in obj) {
+                arr.push(key);
+            }
+            arr.sort(sortNumber);
+            for(var i=0; i<arr.length; i++) {
+                arrSorted.push(obj[arr[i]]);
+            }
+            return arrSorted;
         }
 
       
         var tempObj = {};
-	  
+      
         for (var i = 0, k = this.placeObjects.length; i < k; i++) {
           
             var placeObject = this.placeObjects[i];
-			
+            
             if (placeObject.tp == 14 || placeObject.tp == 43) { // 暂不支持的placeObject类型
                 continue;
             }
 
-			var depth = placeObject.d;
+            var depth = placeObject.d;
 
-			if(!placeObject.remove && depth) {
-				currentDepths.push(depth);
-			}
+            if(!placeObject.remove && depth) {
+                currentDepths.push(depth);
+            }
             
-			if(placeObject.remove) {
-				removeObjDepths.push(depth);
-			}
+            if(placeObject.remove) {
+                removeObjDepths.push(depth);
+            }
 
-			
+            
             //当节点存在remove属性时，缓存此节点
-			if(placeObject.remove) {
-				removeObj.push(placeObject);
-			}
+            if(placeObject.remove) {
+                removeObj.push(placeObject);
+            }
 
             if (placeObject.tp == 1) {
  
-			    tempArr = createArrByDepth(tempObj);
-			
-				if(removeObj) {
+                tempArr = createArrByDepth(tempObj);
+            
+                if(removeObj) {
                      for(var m=0; m<removeObj.length; m++) {
-						if(!inArray(removeObj[m].d, currentDepths)) {
-							removeObjLater.push(removeObj[m]);
-						} else {
-							
-						}              
-				     }
-					 tempArr = tempArr.concat(removeObjLater);
-				}
-				//深度复制temp,可在改变frame的同时不改变其内存
-				frame = tempArr.slice();
-				
-				frame.push(placeObject);
+                        if(!inArray(removeObj[m].d, currentDepths)) {
+                            removeObjLater.push(removeObj[m]);
+                        } else {
+                            
+                        }              
+                     }
+                     tempArr = tempArr.concat(removeObjLater);
+                }
+                //深度复制temp,可在改变frame的同时不改变其内存
+                frame = tempArr.slice();
                 
-				//不让tempObj中的remove传到下一帧,并删除d已经存在的placeObject
-				if(removeObjLater.length>0) {
-					for(var j=0; j<removeObjLater.length; j++) {
-						for(var key in tempObj) {
-							if(removeObjLater[j] == tempObj[key] || removeObjLater[j].d == tempObj[key].d) {
-								delete tempObj[key];
-							}
-						}
-					}
-				}
+                frame.push(placeObject);
+                
+                //不让tempObj中的remove传到下一帧,并删除d已经存在的placeObject
+                if(removeObjLater.length>0) {
+                    for(var j=0; j<removeObjLater.length; j++) {
+                        for(var key in tempObj) {
+                            if(removeObjLater[j] == tempObj[key] || removeObjLater[j].d == tempObj[key].d) {
+                                delete tempObj[key];
+                            }
+                        }
+                    }
+                }
 
  
-                this.frames.push(frame);	    
+                this.frames.push(frame);        
                 frame = [];
                 removeObj = [];
                 currentDepths = [];
-				removeObjLater = [];
+                removeObjLater = [];
                 removeObjDepths = [];
             } else {
-				if(depth) {
-					if(!placeObject.remove) {
-						if(depth in tempObj) { 
-							var lastObj = tempObj[depth];
-							if(true) {	
+                if(depth) {
+                    if(!placeObject.remove) {
+                        if(depth in tempObj) { 
+                            var lastObj = tempObj[depth];
+                            if(true) {  
                                 var newObj = {};
-								newObj.id =  placeObject.id;
-								newObj.d = placeObject.d;
-								if(placeObject.ma) {
+                                newObj.id =  placeObject.id;
+                                newObj.d = placeObject.d;
+                                if(placeObject.ma) {
                                     newObj.ma = placeObject.ma;
-								}
-								if(!placeObject.ma && lastObj.ma) {
-									if(!inArray(placeObject.d, removeObjDepths)) {
-										newObj.ma = lastObj.ma;
-									}       
-								}
-								if(placeObject.cD) {
+                                }
+                                if(!placeObject.ma && lastObj.ma) {
+                                    if(!inArray(placeObject.d, removeObjDepths)) {
+                                        newObj.ma = lastObj.ma;
+                                    }       
+                                }
+                                if(placeObject.cD) {
                                     newObj.cD = placeObject.cD;
-								}
-								if(!placeObject.cD && lastObj.cD) {
-									if(!inArray(placeObject.d, removeObjDepths)) {
-										newObj.cD = lastObj.cD;
-									}       
-								}
-								if(placeObject.cx) {
+                                }
+                                if(!placeObject.cD && lastObj.cD) {
+                                    if(!inArray(placeObject.d, removeObjDepths)) {
+                                        newObj.cD = lastObj.cD;
+                                    }       
+                                }
+                                if(placeObject.cx) {
                                     newObj.cx = placeObject.cx;
-								}
+                                }
                                 if(!placeObject.cx && lastObj.cx) {
-									if(!inArray(placeObject.d, removeObjDepths)) {
-										newObj.cx = lastObj.cx;
-									}       
-								}
-								if(placeObject.fl) {
+                                    if(!inArray(placeObject.d, removeObjDepths)) {
+                                        newObj.cx = lastObj.cx;
+                                    }       
+                                }
+                                if(placeObject.fl) {
                                     newObj.fl = placeObject.fl;
-								}
-								if(!placeObject.fl && lastObj.fl) {
-									if(!inArray(placeObject.d, removeObjDepths)) {
-										newObj.fl = lastObj.fl;
-									}       
-								}
-								if(placeObject.opacity) {
+                                }
+                                if(!placeObject.fl && lastObj.fl) {
+                                    if(!inArray(placeObject.d, removeObjDepths)) {
+                                        newObj.fl = lastObj.fl;
+                                    }       
+                                }
+                                if(placeObject.opacity) {
                                     newObj.opacity = placeObject.opacity;
-								}
-								if(!placeObject.opacity && lastObj.opacity) {
-									if(!inArray(placeObject.d, removeObjDepths)) {
-										newObj.opacity = lastObj.opacity;
-									}       
-								}
-								if(placeObject.opacity==0.0) {
+                                }
+                                if(!placeObject.opacity && lastObj.opacity) {
+                                    if(!inArray(placeObject.d, removeObjDepths)) {
+                                        newObj.opacity = lastObj.opacity;
+                                    }       
+                                }
+                                if(placeObject.opacity==0.0) {
                                     newObj.opacity = 0.0;
-								}
-								if(placeObject.rp) {
-									newObj.rp = true;
-								}
-								if(placeObject.tp) {
-									newObj.tp = placeObject.tp;
-								}
+                                }
+                                if(placeObject.rp) {
+                                    newObj.rp = true;
+                                }
+                                if(placeObject.tp) {
+                                    newObj.tp = placeObject.tp;
+                                }
                                 tempObj[depth] = newObj;
-							}
-							
-						} else {
-							tempObj[depth] = placeObject;
-						}
-					}  
-				}
-				 	
-			}
+                            }
+                            
+                        } else {
+                            tempObj[depth] = placeObject;
+                        }
+                    }  
+                }
+                    
+            }
         }
         
         // 缓存实例
         st.sprite.instances.push(this);  
-		console.log('st.sprite.instances:',st.sprite.instances);
         //console.log(this.frames);  
         this.debugId = j.id;
     };
@@ -1242,7 +1240,7 @@
     */
     st.sprite.prototype.showFrame = function() {
    
-	
+    
 
     //每隔new一个sprite对象则进行showFrame操作。
         var pls = this.frames[this.frame],
@@ -1270,7 +1268,7 @@
         }
 
         if (this.frame == this.frames.length) {
-		    this.frame = 0;
+            this.frame = 0;
         }
         
     };
@@ -1326,7 +1324,7 @@
         this.pause = true;
     };
     
-	st.sprite.prototype.start = function() {
+    st.sprite.prototype.start = function() {
         this.pause = false;
     };
     /*
@@ -1372,7 +1370,6 @@
     * @method renderShape
     */
     st.sprite.prototype.renderShape = function(placeObject) {
-        console.log('placeObject',placeObject);
         if ('nm' in placeObject) {
             this.name = placeObject['nm'];
         }
@@ -1384,13 +1381,13 @@
         }
 
         if ('rp' in p) {
-			o = this.replaceShape(p);
-			this.afterRender(o, p);
+            o = this.replaceShape(p);
+            this.afterRender(o, p);
         } else {
             o = this.getShape(p);
             if(o) {
-				this.afterRender(o, p);
-			}
+                this.afterRender(o, p);
+            }
         }
         return true;
     };
@@ -1405,8 +1402,7 @@
     */
     st.sprite.prototype.replaceShape = function(j) {
 
-	//可在初始化的时候调用，也可在afterRender的时候调用.为一帧中的若干个动作
-        console.log('this.par:',this.par);
+    //可在初始化的时候调用，也可在afterRender的时候调用.为一帧中的若干个动作
         // var parentNode = this.par.firstChild.nextSibling;
         var parentNode = this.par.children[1];  
         // var parentNode = this.par.children[1];  
@@ -1414,27 +1410,23 @@
         // console.log('parentNode:',parentNode);
         var nshape = this.createShape(j);
         //console.log(nshape);
-		var depth = j.d;
-	   
+        var depth = j.d;
+       
         if (this.depths[depth]) {
-		    console.log('============== parentNode1',parentNode);
-
-            var oldNodeId = this.par.getAttribute('id') + ':' + depth + ':' + this.depths[depth];
-			
-            var oldNode = document.getElementById(oldNodeId);
             
-			 console.log('oldNode:',oldNode);
-             console.log('svg.defin',svg.Definitions);
+            var oldNodeId = this.par.getAttribute('id') + ':' + depth + ':' + this.depths[depth];
+            
+            
+            // //此帧前可能会有remove操作，则需判断oldNode是否在dom中
+            // parentNode.replaceChild(nshape, oldNode);
+            for(var i = 0; i < parentNode.children.length; i++){
 
-            if (oldNodeId == nshape.id) {
-			
-                return oldNode;
+                if(parentNode.children[i].getAttribute('id') == oldNodeId ){
+                    parentNode.children[i] = nshape;
+                }
+
             }
             
-			//此帧前可能会有remove操作，则需判断oldNode是否在dom中
-			
-			parentNode.replaceChild(nshape, oldNode);
-			
     
             if (this.sprites[depth + ':' + this.depths[depth]]) {
                 this.sprites[depth + ':' + this.depths[depth]] = null;
@@ -1448,15 +1440,13 @@
                 }
             }
         } else {
-	       
+           
             if (this.lastDepth) {
-     	        //判断同一帧里面，是否有相同depth的节点存在
-		       
+                //判断同一帧里面，是否有相同depth的节点存在
+               
                 var nodeId = this.par.getAttribute('id') + ':' + this.lastDepth + ':' + this.depths[this.lastDepth]; //上一帧
-				
+                
                 var node = document.getElementById(nodeId);
-                console.log('==== node ====',nodeId);
-                console.log(svg.Definitions);
                 if(node) {
                 //如果depth相同的节点下面是否别的节点
                     var sibling = node.nextSibling;
@@ -1464,29 +1454,25 @@
                 
 
                 if (sibling) {
-					
+                    
                     parentNode.insertBefore(nshape, sibling);
-					
+                    
                 } else {
-				
+                
                     parentNode.addChild(nshape);
-					
+                    
                 }
             } else {
-                console.log('parentNode ====', parentNode);
                 var firstNode = parentNode && parentNode.children[0];
-                // console.log('parentNode:',parentNode);
-                // var firstNode = parentNode && parentNode.children && parentNode.children[0];
-                // console.log('parentNode:',parentNode);
                 if (firstNode) {
-					parentNode.children.unshift(nshape);
+                    parentNode.children.unshift(nshape);
                 } else {
                     parentNode.addChild(nshape);
                 }
             }
         }
-	
-	// 每次进行render的时候，将id放入depths数组中
+    
+    // 每次进行render的时候，将id放入depths数组中
   
         this.depths[depth] = j.id;
         return nshape;
@@ -1506,8 +1492,13 @@
             // var parentNode = this.par.firstChild.nextSibling;
             var parentNode = this.par.children[1];
             var nodeId = this.par.getAttribute('id') + ':' + depth + ':' + removeId;
-            var node = document.getElementById(nodeId);
-            parentNode.removeChild(node);
+            // var node = document.getElementById(nodeId);
+            // parentNode.removeChild(node);
+            for(var i = 0; i < parentNode.children.length; i++){
+                if(parentNode.children[i].getAttribute('id') == nodeId){
+                    parentNode.children.splice(i,1);
+                }
+            }
             if (this.sprites[depth + ':' + this.depths[depth]]) {
                 this.sprites[depth + ':' + this.depths[depth]] = null;
                 delete this.sprites[depth + ':' + this.depths[depth]];
@@ -1533,7 +1524,7 @@
     st.sprite.prototype.getShape = function(j) {
         var sid = this.par.getAttribute('id');
         var id = sid + ':' + j.d + ':' + j.id;
-		
+        
         var shape = document.getElementById(id);
         return shape;
     };
@@ -1552,7 +1543,6 @@
         this.mxTransform(shape, placeObject);
         this.cxTransform(shape, placeObject);
         this.changeOpacity(shape, placeObject);
-//		console.log(shape);
         this.addFilters(shape, placeObject);
     };
     
@@ -1565,7 +1555,7 @@
      * @param {object} placeObject
      */
     st.sprite.prototype.mxTransform = function(shape, placeObject) {
-		
+        
         var map = {
             'mask':'moveShape',
             'shape':'moveShape',
@@ -1576,17 +1566,11 @@
         
 
         if ('ma' in placeObject) {
-			if(shape.getAttribute('type')) {
-            var type = shape.getAttribute('type');
-            var method = map[type];
-            // console.log('=================map',map);
-            // console.log('=================type',type);
-            // console.log('=================method',method);
-            // console.log('=================shape',shape);
-            // console.log('=================placeObject',placeObject);
-            // console.log('this',this);
-            this[method](shape, placeObject);
-			}
+            if(shape.getAttribute('type')) {
+                var type = shape.getAttribute('type');
+                var method = map[type];
+                this[method](shape, placeObject);
+            }
         }
     };
     
@@ -1651,7 +1635,7 @@
         var p = placeObject,
             mx = p['ma'],
             key = p.d + ':' + p.id;
-		
+        
        //找到相应的tag ID来对应p.id(tagID无引号)
         this.sprites[key] = this.sprites[key] || (new st.sprite(st.hash[p.id], shape));
 
@@ -1675,7 +1659,7 @@
         var mx = placeObject['ma'];
         var tag = st.hash[placeObject['id']];
 
-        if (!this.buttons) {	
+        if (!this.buttons) {    
             this.buttons = {};
         }
         if (!this.buttons[depth + ':' + id]) {
@@ -1730,7 +1714,7 @@
         * @param {object} placeObject
         */
         init: function(tag) {
-			
+            
             var record = tag.rc,
                 rec,
                 shape,
@@ -1739,10 +1723,10 @@
             for (var i = record.length - 1; i >= 0; i --) {
                 rec = record[i];
                 state = rec.s;
-				
+                
                 shape = st.defineShapes[rec.id].cloneNode(true);
                 shape.setAttribute('transform', rec['tf']);
-				
+                
                 shape.setAttribute('sid', rec.id);
                 
                 shape.setAttribute('id', this.pid.concat(':', rec.id, '_', i));
@@ -1896,8 +1880,6 @@
                     var mainMovie = st.sprite.instances[0];
                     (function(o, element, m, a){
                         element.addEventListener('mouseup', function(e) {
-                            //console.log('method: ' + m);
-                            //console.log('args: ' + a);
                             if (m in o) {
                                 o[m](a);
                             }
@@ -2008,7 +1990,7 @@
         */
         function transform(node, cx) {
             var way = node.hasAttribute('stroke') ? 'stroke': 'fill';
-			
+            
             var color = node.getAttribute(way);
             if (!color) return;
             var type = color.match(/^\S{3}/)[0];
@@ -2018,7 +2000,7 @@
                     transformPath(color, node, cx, way);
                     break;
                 case 'url':
-					
+                    
                     transformGradient(color, node, cx, way);
                     break;
             }
@@ -2039,7 +2021,7 @@
         function transformPath(color, node, cx, way) {
             node.oriC = node.oriC || color;
             var a = _transform(node.oriC, cx);
-			
+            
             node.setAttribute(way, 'rgb(' + a[0] + ',' + a[1] + ',' + a[2] + ')');
         }
     
@@ -2184,9 +2166,9 @@
 
         if ('opacity' in placeObject) {
             opacityValue = placeObject['opacity'];
-			shape.setAttribute('opacity', opacityValue);
+            shape.setAttribute('opacity', opacityValue);
         }
-		
+        
       
     };
     /*
@@ -2217,8 +2199,6 @@
     */
     st.sprite.prototype.getNode = function(j) {
         var node = st.defineShapes[j.id].cloneNode(true);
-        console.log('getNode1:',st.defineShapes[j.id]);
-        console.log('getNode2:',node);
         return node;
     };
     /*
@@ -2230,17 +2210,17 @@
     */
     st.sprite.prototype.createShape = function(j) {
         var shape = this.getNode(j);
-		
+        
         var id = this.par.getAttribute('id') + ':' + j.d + ':' + j.id;
         if ('cD' in j) {
-		
+        
             this.clipDepthId = id;
             this.clipDepth = j.cD;
             this.clipDepthDepth = j.d;
             shape = this.createClip(j);
         } else {
             // 添加遮罩
-//		    console.log(this.clipDepthId);
+//          console.log(this.clipDepthId);
             if (this.clipDepthId) {
                 if (j.d > this.clipDepthDepth && j.d <= this.clipDepth) {
                     shape.setAttribute('clip-path', 'url(#' + this.clipDepthId + ')');
@@ -2258,13 +2238,13 @@
     * @param {object} placeObject
     */
     st.sprite.prototype.createClip = function(placeObject) {
-		
+        
         var shape = this.getNode(placeObject);
 
         var clipType = shape.getAttribute('type');
         switch (clipType) {
             case 'shape':
-				
+                
                 return this.createSimpleClip(shape); // 普通的mask
             case 'sprite':
                 return this.createComplexClip(placeObject); // sprite作为mask
@@ -2278,7 +2258,7 @@
     * @param {object} placeObject
     */
     st.sprite.prototype.createSimpleClip = function(shape) {
-		
+        
         var cp = st.createTag('clipPath');
         // var paths = shape.firstChild.nextSibling.childNodes;
         var paths = shape.children[1].children;
@@ -2300,19 +2280,19 @@
     * @param {object} placeObject
     */
     st.sprite.prototype.createComplexClip = function(placeObject) {
-		
+        
         var tag = st.hash[placeObject.id];
-		var sortTag = [];
-		for(var i=0; i< tag['Sf'].length; i++) {
-			if(!tag['Sf'][i].remove) {
-				sortTag.push(tag['Sf'][i]);
-			}
-		}
+        var sortTag = [];
+        for(var i=0; i< tag['Sf'].length; i++) {
+            if(!tag['Sf'][i].remove) {
+                sortTag.push(tag['Sf'][i]);
+            }
+        }
         var o = sortTag[0];
-		
-		var rshape = st.defineShapes[o.id];
-		return this.createSimpleClip(rshape);
-	
+        
+        var rshape = st.defineShapes[o.id];
+        return this.createSimpleClip(rshape);
+    
     };
     /*
     * <p>
@@ -2360,70 +2340,74 @@
         root.addChild(svg.CreateElement('defs'));
         root.addChild(svg.CreateElement('g'));
         st.root.addChild(root);
-		//console.log(root);
+        //console.log(root);
         var mainMovie = new st.sprite(d.Mf, root);
 
         canvg('canvas');
+        svg.loadXml();
             
         st.timer = setTimeout(function() {
             mainMovie.showFrame();
-            svg.loadXml();
-            console.log(svg);
+            // console.log('st.timer');
+            
+            // // console.log('=====svg',st.root);
+            // console.log(svg);
             // debugger;
+            svg.loadXml();
             st.timer = setTimeout(arguments.callee, st.interval);
         }, st.interval);
 
         
-		function _StartAndStop() {
-			var control = document.createElement("button");
-			control.innerHTML = "stop";
-			control.id = "control";
-			document.body.appendChild(control);
-			if(control) {
-				control.onclick = function() {
-					if(control.innerHTML=="stop") {
-						control.innerHTML = 'start';
-						mainMovie.stop();
-						st.stop();
-					} else {
-						control.innerHTML = 'stop';
-						mainMovie.start();
-						st.timer = setTimeout(function() {
-							mainMovie.showFrame();
-							st.timer = setTimeout(arguments.callee, st.interval);
-						}, st.interval);
-						
-					}
-				}
-			}
-		}
+        function _StartAndStop() {
+            var control = document.createElement("button");
+            control.innerHTML = "stop";
+            control.id = "control";
+            document.body.appendChild(control);
+            if(control) {
+                control.onclick = function() {
+                    if(control.innerHTML=="stop") {
+                        control.innerHTML = 'start';
+                        mainMovie.stop();
+                        st.stop();
+                    } else {
+                        control.innerHTML = 'stop';
+                        mainMovie.start();
+                        st.timer = setTimeout(function() {
+                            mainMovie.showFrame();
+                            st.timer = setTimeout(arguments.callee, st.interval);
+                        }, st.interval);
+                        
+                    }
+                }
+            }
+        }
 
         function _goToFrame() {
              var wrap = document.createElement("div"),
-				 span = document.createElement("span"),
-				 input = document.createElement("input"),
-				 button = document.createElement("button");
-			 wrap.id = "toFrame";
+                 span = document.createElement("span"),
+                 input = document.createElement("input"),
+                 button = document.createElement("button");
+             wrap.id = "toFrame";
              document.body.appendChild(wrap);
-			 input.type = "text";
-			 input.size = "2";
-			 button.innerHTML = "Go";
-			 span.innerHTML = "All " + (mainMovie.frames.length-1) + " frames, go to ";
+             input.type = "text";
+             input.size = "2";
+             button.innerHTML = "Go";
+             span.innerHTML = "All " + (mainMovie.frames.length-1) + " frames, go to ";
              wrap.appendChild(span);
-			 wrap.appendChild(input);
-			 wrap.appendChild(button);
-			 button.onclick = function() {
-				var frame = input.value;
-				if(frame > mainMovie.frames.length) {
-					alert("Invalid number!");
-					return;
-				} 
+             wrap.appendChild(input);
+             wrap.appendChild(button);
+             button.onclick = function() {
+                var frame = input.value;
+                if(frame > mainMovie.frames.length) {
+                    alert("Invalid number!");
+                    return;
+                } 
                 mainMovie.gotoFrame(frame);
 
-			 }
-		}
-		 // _StartAndStop();
-//		 _goToFrame();
+             }
+        }
+         // _StartAndStop();
+//       _goToFrame();
         /*
         st.timer = setInterval(function() {
             mainMovie.showFrame();
@@ -2451,6 +2435,7 @@
     st.resume = function() {
         st.timer = setTimeout(function() {
             mainMovie.showFrame();
+            
             setTimeout(arguments.callee, st.interval);
         }, st.interval);
     };
@@ -2463,7 +2448,7 @@
     */
     st.setBackground = function(root) {
         var d = data;
-		
+        
         var bg = svg.CreateElement('rect');
         var bound = {
             x: d.Ft.xi,

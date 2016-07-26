@@ -448,8 +448,6 @@ svg.Property = function(name, value) {
 	//debugger;
 	this.name = name;
 	this.value = value;
-	// debugger;
-	console.log('svgproperty:',this.name,this.value); 
 }
 svg.Property.prototype.getValue = function() {
 	return this.value || '';
@@ -504,8 +502,6 @@ svg.Property.prototype.getDefinition = function() {
 }
 
 svg.Property.prototype.isUrlDefinition = function() {
-	// console.log('this.value',this.name,this.value);
-	console.log('isUrlDefinition',this.value);
 	return this.value.indexOf('url(') == 0
 }
 
@@ -847,9 +843,15 @@ svg.Element.ElementBase = function(nodeName,nodeAttributes) {
 	// get or create attribute
 	this.attribute = function(name, createIfNotExists) {
 		var a = this.attributes[name];
+		var createIfNotExists = true;
+
 		if (a != null) return a;
 
-		if (createIfNotExists == true) { a = new svg.Property(name, ''); this.attributes[name] = a; }
+		if (createIfNotExists == true) {
+			a = new svg.Property(name, ''); 
+			this.attributes[name] = a; 
+		}
+
 		return a || svg.EmptyProperty;
 	}
 
@@ -867,8 +869,8 @@ svg.Element.ElementBase = function(nodeName,nodeAttributes) {
 		this.attributes[name] = new svg.Property(name,value);
 	}
 	this.getAttribute = function(name){
-		var propertyObj = this.attributes[name];
-		return (propertyObj && propertyObj.value && propertyObj.value.value) || (propertyObj && propertyObj.value) || '';
+		var propertyObj = this.attribute(name);
+		return propertyObj.value;
 	}
 	this.getHrefAttribute = function() {
 		for (var a in this.attributes) {
@@ -997,16 +999,23 @@ svg.Element.ElementBase = function(nodeName,nodeAttributes) {
 		// 	var nodeName = normalizeAttributeName(attribute.nodeName);
 		// 	this.attributes[nodeName] = new svg.Property(nodeName, attribute.value);
 		// }
-		for(var nodeName in nodeAttributes){
-			var nodeValue = nodeAttributes[nodeName];
-			var nodeName = normalizeAttributeName(nodeName);
-			this.attributes[nodeName] = new svg.Property(nodeName,nodeValue);
+		// for(var nodeName in nodeAttributes){
+		// 	var nodeValue = nodeAttributes[nodeName];
+		// 	var nodeName = normalizeAttributeName(nodeName);
+		// 	this.attributes[nodeName] = new svg.Property(nodeName,nodeValue);
+		// }
+
+		for(var nodeName1 in nodeAttributes){
+			var nodeValue1 = nodeAttributes[nodeName1];
+			var nodeName1 = normalizeAttributeName(nodeName1);
+			this.attributes[nodeName1] = new svg.Property(nodeName1,nodeValue1);
 		}
 
 		this.addStylesFromStyleDefinition();
 
 		// add inline styles
 		if (this.attribute('style').hasValue()) {
+			console.log('====== style',this.attribute('style'));
 			var styles = this.attribute('style').value.split(';');
 			for (var i=0; i<styles.length; i++) {
 				if (svg.trim(styles[i]) != '') {
@@ -1422,9 +1431,7 @@ svg.Element.path = function(nodeName,nodeAttributes) {
 	this.base(nodeName,nodeAttributes);
 
 	// var d = this.attribute('d').value;
-	var d = this.getAttribute('d');
-	console.log('d',d);
-	// console.log(this.getAttribute('d'));
+	var d = this.attribute('d',true).value;
 	// TODO: convert to real lexer based on http://www.w3.org/TR/e1/paths.html#PathDataBNF
 	d = d.replace(/,/gm,' '); // get rid of all commas
 	// As the end of a match can also be the start of the next match, we need to run this replace twice.
@@ -2519,9 +2526,10 @@ svg.Element.image = function(nodeName,nodeAttributes) {
 	this.base(nodeName,nodeAttributes);
 
 	var href = this.getHrefAttribute().value;
+	console.log('this',this);
 	if (href == '') { return; }
 	var isSvg = href.match(/\.svg$/)
-
+	console.log('svg.Images:',svg.Images);
 	svg.Images.push(this);
 	this.loaded = false;
 	if (!isSvg) {
