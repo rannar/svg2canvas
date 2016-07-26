@@ -448,8 +448,6 @@ svg.Property = function(name, value) {
 	//debugger;
 	this.name = name;
 	this.value = value;
-	// debugger;
-	console.log('svgproperty:',this.name,this.value); 
 }
 svg.Property.prototype.getValue = function() {
 	return this.value || '';
@@ -505,7 +503,7 @@ svg.Property.prototype.getDefinition = function() {
 
 svg.Property.prototype.isUrlDefinition = function() {
 	// console.log('this.value',this.name,this.value);
-	console.log('isUrlDefinition',this.value);
+	console.log('this.value',this.value);
 	return this.value.indexOf('url(') == 0
 }
 
@@ -745,37 +743,37 @@ svg.loadXmlDoc = function() {
 		waitingForImages = false;
 		draw();
 	}
-	svg.intervalID = setInterval(function() {
-		var needUpdate = false;
+	// svg.intervalID = setInterval(function() {
+	// 	var needUpdate = false;
 
-		if (waitingForImages && svg.ImagesLoaded()) {
-			waitingForImages = false;
-			needUpdate = true;
-		}
+	// 	if (waitingForImages && svg.ImagesLoaded()) {
+	// 		waitingForImages = false;
+	// 		needUpdate = true;
+	// 	}
 
-		// need update from mouse events?
-		if (svg.opts['ignoreMouse'] != true) {
-			needUpdate = needUpdate | svg.Mouse.hasEvents();
-		}
+	// 	// need update from mouse events?
+	// 	if (svg.opts['ignoreMouse'] != true) {
+	// 		needUpdate = needUpdate | svg.Mouse.hasEvents();
+	// 	}
 
-		// need update from animations?
-		if (svg.opts['ignoreAnimation'] != true) {
-			for (var i=0; i<svg.Animations.length; i++) {
-				needUpdate = needUpdate | svg.Animations[i].update(1000 / svg.FRAMERATE);
-			}
-		}
+	// 	// need update from animations?
+	// 	if (svg.opts['ignoreAnimation'] != true) {
+	// 		for (var i=0; i<svg.Animations.length; i++) {
+	// 			needUpdate = needUpdate | svg.Animations[i].update(1000 / svg.FRAMERATE);
+	// 		}
+	// 	}
 
-		// need update from redraw?
-		if (typeof svg.opts['forceRedraw'] == 'function') {
-			if (svg.opts['forceRedraw']() == true) needUpdate = true;
-		}
+	// 	// need update from redraw?
+	// 	if (typeof svg.opts['forceRedraw'] == 'function') {
+	// 		if (svg.opts['forceRedraw']() == true) needUpdate = true;
+	// 	}
 
-		// render if needed
-		if (needUpdate) {
-			draw();
-			svg.Mouse.runEvents(); // run and clear our events
-		}
-	}, 1000 / svg.FRAMERATE);
+	// 	// render if needed
+	// 	if (needUpdate) {
+	// 		draw();
+	// 		svg.Mouse.runEvents(); // run and clear our events
+	// 	}
+	// }, 1000 / svg.FRAMERATE);
 }
 
 svg.stop = function() {
@@ -867,8 +865,8 @@ svg.Element.ElementBase = function(nodeName,nodeAttributes) {
 		this.attributes[name] = new svg.Property(name,value);
 	}
 	this.getAttribute = function(name){
-		var propertyObj = this.attributes[name];
-		return (propertyObj && propertyObj.value && propertyObj.value.value) || (propertyObj && propertyObj.value) || '';
+		var propertyObj = this.attribute(name,true);
+		return propertyObj.value;
 	}
 	this.getHrefAttribute = function() {
 		for (var a in this.attributes) {
@@ -1422,8 +1420,12 @@ svg.Element.path = function(nodeName,nodeAttributes) {
 	this.base(nodeName,nodeAttributes);
 
 	// var d = this.attribute('d').value;
-	var d = this.getAttribute('d');
-	console.log('d',d);
+	var d = this.attribute('d',true).value;
+	console.log('d',d)
+	this.setAttribute('d', 'M-1212,-599L1212 -599L1212 599L-1212 599L-1212 -599');
+	d = 'M-1212,-599L1212 -599L1212 599L-1212 599L-1212 -599';
+	// console.log('d',d);
+	// d = d.value;
 	// console.log(this.getAttribute('d'));
 	// TODO: convert to real lexer based on http://www.w3.org/TR/e1/paths.html#PathDataBNF
 	d = d.replace(/,/gm,' '); // get rid of all commas

@@ -1,4 +1,4 @@
-    var data = basedata;
+    var data = data;
     if (!String.prototype.trim) {
         String.prototype.trim = function() {
             return this.replace(/^\s+/, "").replace(/\s+$/, "");
@@ -257,7 +257,7 @@
                     } else {
                         text.setAttribute('font-family', r.fd);
                     }
-                   
+                    
                     text.setAttribute('fill', r.c);
                     text.setAttribute('x', r.x);
                     text.setAttribute('y', r.y);
@@ -426,6 +426,7 @@
     
             // var image = st.createTag('image');
             var image = svg.CreateElement('image');
+            console.log('image:',image);
             for (var key in fillObject.image){
                 
                 if (key == 'width' || key == 'height'){
@@ -488,6 +489,7 @@
                     break;
                 }
                 path.setAttribute("fill", "url(#" + cid + ")");
+                debugger;
             }
         };
         
