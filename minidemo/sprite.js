@@ -288,7 +288,7 @@
         // var g = st.createTag('g');
         // var defs = st.createTag('defs');
         // var childsHolder = st.createTag('g');
-        
+        console.log('===== processSprite');
         var g = svg.CreateElement('g');
         g.setAttribute('type', 'sprite');
         var defs = svg.CreateElement('defs');
@@ -465,8 +465,6 @@
             var type = fillObject.tp;
             
             if (type == 1) {
-                
-                console.log('======= path',path);
                 path.setAttribute('fill', fillObject.c);
                 path.setAttribute('fill-opacity', (typeof fillObject['fill-opacity'] == 'undefined') ? 1 : fillObject['fill-opacity']);
             } else {
@@ -490,7 +488,6 @@
                     break;
                 }
                 path.setAttribute("fill", "url(#" + cid + ")");
-                // debugger;
             }
         };
         
@@ -2346,16 +2343,19 @@
         canvg('canvas');
         svg.loadXml();
             
-        st.timer = setTimeout(function() {
+        // st.timer = setTimeout(function() {
             mainMovie.showFrame();
             // console.log('st.timer');
             
             // // console.log('=====svg',st.root);
             // console.log(svg);
-            // debugger;
             svg.loadXml();
-            st.timer = setTimeout(arguments.callee, st.interval);
-        }, st.interval);
+            console.log('st.root:',st.root.children);
+            // for(var i = 0; i < st.root.children.length; i++){
+            //     console.log(st.root.children[i].svgtype,st.root.children[i].attributes);
+            // }
+        //     st.timer = setTimeout(arguments.callee, st.interval);
+        // }, st.interval);
 
         
         function _StartAndStop() {
