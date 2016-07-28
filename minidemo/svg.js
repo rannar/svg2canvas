@@ -2953,8 +2953,5 @@ svg.Element.MISSING = function(nodeName,nodeAttributes) {
 }
 svg.Element.MISSING.prototype = new svg.Element.ElementBase;
 
-svg.getRelationship = function(){
-	console.log('==== getRelationship ====');
-}
 
 

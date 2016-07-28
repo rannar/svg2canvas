@@ -2343,19 +2343,13 @@
         canvg('canvas');
         svg.loadXml();
             
-        // st.timer = setTimeout(function() {
+        st.timer = setTimeout(function() {
             mainMovie.showFrame();
-            // console.log('st.timer');
-            
-            // // console.log('=====svg',st.root);
-            // console.log(svg);
             svg.loadXml();
             console.log('st.root:',st.root.children);
-            // for(var i = 0; i < st.root.children.length; i++){
-            //     console.log(st.root.children[i].svgtype,st.root.children[i].attributes);
-            // }
-        //     st.timer = setTimeout(arguments.callee, st.interval);
-        // }, st.interval);
+            debugger;
+            st.timer = setTimeout(arguments.callee, st.interval);
+        }, st.interval);
 
         
         function _StartAndStop() {
