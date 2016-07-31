@@ -14,7 +14,6 @@ if (svg.opts['log'] == true && typeof console != 'undefined') {
 
 // globals
 svg.init = function(ctx) {
-	//debugger;
 	var uniqueId = 0;
 	svg.UniqueId = function () { uniqueId++; return 'canvg' + uniqueId;	};
 	svg.Definitions = svg.Definitions || {};
@@ -493,10 +492,8 @@ svg.Property.prototype.addOpacity = function(opacityProp) {
 // get the definition from the definitions table
 svg.Property.prototype.getDefinition = function() {
 	var name = this.value.match(/#([^\)'"]+)/);
-	// console.log('name',name);
 	if (name) { name = name[1]; }
 	if (!name) { name = this.value; }
-	// debugger;
 	return svg.Definitions[name];
 }
 
@@ -647,7 +644,6 @@ svg.loadXmlDoc = function() {
 	e.root = true;
 	e.addStylesFromStyleDefinition();
 
-	// render loop
 	svg.draw(e);
 }
 svg.draw = function(e) {
@@ -859,7 +855,6 @@ svg.Element.ElementBase.prototype.cloneNode = function(){
     }
     return resultNode;
 }
-
 
 svg.Element.ElementBase.prototype.setAttribute = function(name,value){
 	this.attributes[name] = new svg.Property(name,value);
@@ -1419,7 +1414,6 @@ svg.Element.polygon.prototype.path = function(ctx) {
 svg.Element.path = function(nodeName,nodeAttributes) {
 	this.base = svg.Element.PathElementBase;
 	this.base(nodeName,nodeAttributes);
-
 	// var d = this.attribute('d').value;
 	var d = this.attribute('d',true).value;
 	// TODO: convert to real lexer based on http://www.w3.org/TR/e1/paths.html#PathDataBNF
@@ -2026,10 +2020,12 @@ svg.Element.stop.prototype = new svg.Element.ElementBase;
 
 //Class AnimateBase =========================================
 svg.Element.AnimateBase = function(nodeName,nodeAttributes) {
+
 	this.base = svg.Element.ElementBase;
 	this.base(nodeName,nodeAttributes);
 
 	svg.Animations.push(this);
+	
 
 	this.duration = 0.0;
 	this.begin = this.attribute('begin').toMilliseconds();

@@ -39,7 +39,7 @@
         st.initRoot();
         st.initDefs();
         st.initShapes();
-    
+
         st.interval = Math.floor(1000 / d.Fr);
     };
     
@@ -976,7 +976,7 @@
          * @method filterDom
          */
         this.attachFilter = function() {
-            if (this.element.childNodes.length > 0) {
+            if (this.element.children.length > 0) {
                 this.target.setAttribute('filter', 'url(#' + this.id + ')');
             }
         };
@@ -1554,13 +1554,15 @@
         var mx = placeObject['ma'];
 
         if (shape.svgtype.toLowerCase() == 'g') {
+            console.log('moveShape=================');
             // move shape
             // var rs = shape.firstChild.nextSibling;
             var rs = shape.children[1];
             rs && rs.setAttribute('transform', 'matrix(' + mx + ')');
         } else {
+            console.log('moveMask=================');
             // move mask
-            var paths = shape.childNodes;
+            var paths = shape.children;
             for (var i = 0, j = paths.length; i < j; i++) {
                 paths[i].setAttribute('transform', 'matrix(' + mx + ')');
             }
@@ -1599,6 +1601,7 @@
      * @param {object} placeObject
      */
     st.sprite.prototype.moveSprite = function(shape, placeObject) {
+        console.log('moveSprite moveSprite moveSprite');
         var p = placeObject,
             mx = p['ma'],
             key = p.d + ':' + p.id;
@@ -1609,7 +1612,14 @@
         // 递归调用
         this.sprites[key].showFrame();
         // shape.firstChild.nextSibling.setAttribute('transform', 'matrix(' + mx + ')');
-        shape.children[1] && shape.children[1].setAttribute('transform', 'matrix(' + mx + ')');
+        if(shape.children[1]){
+            shape.children[1].setAttribute('transform', 'matrix(' + mx + ')');
+        }
+
+
+        // console.log(shape);
+        // console.log(st.root);
+        // debugger;
 
     };
     
@@ -1913,7 +1923,7 @@
         */
         changeState: function(type) {
             //if (type in this.states) {
-                var els = this.element.childNodes;
+                var els = this.element.children;
                 for (var i = 0, el; el = els[i]; i ++) {
                     
                     if (el.getAttribute('state') == 'hit' || el.getAttribute('state') == type) {
@@ -2319,10 +2329,12 @@
 
         st.timer = setTimeout(function() {
             if(svg.ImagesLoaded()){
+
                 mainMovie.showFrame();
                 svg.loadXml();
                 svg.ctxcan.clearRect(0,0,960,540);
                 svg.ctxcan.drawImage(svg.lpcanvas,0,0);
+                
             }
             st.timer = setTimeout(arguments.callee, st.interval);
         }, st.interval);
