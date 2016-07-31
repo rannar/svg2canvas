@@ -408,12 +408,9 @@
         var addImage = function(fillObject, fid) {
             
             // if (document.getElementById(fid)) return fid;
-        
-            var pattern = svg.CreateElement('pattern',{
-                width: 400,
-                height: 500
-            });
-//          console.log(pattern);
+            
+            var pattern = svg.CreateElement('pattern');
+
             for (var key in fillObject) {
                 if ((typeof fillObject[key] == 'object') || (key == 'type')) {
                     continue;
@@ -488,6 +485,7 @@
                     break;
                 }
                 path.setAttribute("fill", "url(#" + cid + ")");
+
             }
         };
         
@@ -1243,7 +1241,7 @@
         var pls = this.frames[this.frame],
             showFrameTag = pls[pls.length - 1],
             pl = null;
-
+        console.log('pls',this.frames,this.frame,pls);
       //对每一帖所有的内容进行循环解析
         for (var i = 0, k = pls.length - 1; i < k; i ++) {
             pl = pls[i];
@@ -1260,9 +1258,9 @@
             this.handleAction(showFrameTag['ac']);
         }
         
-        if (!this.pause) {
+        // if (!this.pause) {
             this.frame ++;
-        }
+        // }
 
         if (this.frame == this.frames.length) {
             this.frame = 0;
@@ -1379,9 +1377,11 @@
 
         if ('rp' in p) {
             o = this.replaceShape(p);
+            console.log('replace',o);
             this.afterRender(o, p);
         } else {
             o = this.getShape(p);
+            console.log('oooooo',o);
             if(o) {
                 this.afterRender(o, p);
             }
@@ -1437,16 +1437,16 @@
                 }
             }
         } else {
-           
             if (this.lastDepth) {
                 //判断同一帧里面，是否有相同depth的节点存在
                
                 var nodeId = this.par.getAttribute('id') + ':' + this.lastDepth + ':' + this.depths[this.lastDepth]; //上一帧
                 
-                var node = document.getElementById(nodeId);
+                var node = svg.Definitions[nodeId];
+
                 if(node) {
                 //如果depth相同的节点下面是否别的节点
-                    var sibling = node.nextSibling;
+                    var sibling = node.getNextSibling();
                 }
                 
 
@@ -1522,7 +1522,7 @@
         var sid = this.par.getAttribute('id');
         var id = sid + ':' + j.d + ':' + j.id;
         
-        var shape = document.getElementById(id);
+        var shape = svg.Definitions[id];
         return shape;
     };
     
@@ -1536,7 +1536,6 @@
      * @param {object} placeObject，根据上面的属性处理各种变化
      */
     st.sprite.prototype.afterRender = function(shape, placeObject) {
-
         this.mxTransform(shape, placeObject);
         this.cxTransform(shape, placeObject);
         this.changeOpacity(shape, placeObject);
@@ -1552,7 +1551,7 @@
      * @param {object} placeObject
      */
     st.sprite.prototype.mxTransform = function(shape, placeObject) {
-        
+        //console.log('mxTransform：',shape,placeObject)
         var map = {
             'mask':'moveShape',
             'shape':'moveShape',
@@ -1580,7 +1579,6 @@
      * @param {object} placeObject
      */
     st.sprite.prototype.moveShape = function(shape, placeObject) {
-
         var mx = placeObject['ma'];
 
         if (shape.svgtype.toLowerCase() == 'g') {
@@ -1640,6 +1638,7 @@
         this.sprites[key].showFrame();
         // shape.firstChild.nextSibling.setAttribute('transform', 'matrix(' + mx + ')');
         shape.children[1] && shape.children[1].setAttribute('transform', 'matrix(' + mx + ')');
+
     };
     
     /*
@@ -2339,17 +2338,20 @@
         st.root.addChild(root);
         //console.log(root);
         var mainMovie = new st.sprite(d.Mf, root);
+        console.log('mainMovie:',mainMovie);
 
         canvg('canvas');
-        svg.loadXml();
-            
+        // svg.loadXml();
+        
+
         st.timer = setTimeout(function() {
+
             mainMovie.showFrame();
             svg.loadXml();
-            console.log('st.root:',st.root.children);
-            debugger;
             st.timer = setTimeout(arguments.callee, st.interval);
         }, st.interval);
+        
+       
 
         
         function _StartAndStop() {

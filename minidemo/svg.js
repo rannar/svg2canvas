@@ -1,6 +1,9 @@
 
 svg = { opts: {}};
-
+svgId = 0;
+svg.getSvgId = (function(){
+	return svgId++;
+})();
 svg.FRAMERATE = 30;
 svg.MAX_VIRTUAL_PIXELS = 30000;
 
@@ -14,11 +17,11 @@ svg.init = function(ctx) {
 	//debugger;
 	var uniqueId = 0;
 	svg.UniqueId = function () { uniqueId++; return 'canvg' + uniqueId;	};
-	svg.Definitions = {};
-	svg.Styles = {};
-	svg.StylesSpecificity = {};
-	svg.Animations = [];
-	svg.Images = [];
+	svg.Definitions = svg.Definitions || {};
+	svg.Styles = svg.Styles || {};
+	svg.StylesSpecificity = svg.StylesSpecificity || {};
+	svg.Animations = svg.Animations || [];
+	svg.Images = svg.Images || [];
 	svg.ctx = ctx;
 	svg.ViewPort = new (function () {
 		this.viewPorts = [];
@@ -40,7 +43,6 @@ svg.init();
 
 // images loaded
 svg.ImagesLoaded = function() {
-	//debugger;
 	for (var i=0; i<svg.Images.length; i++) {
 		if (!svg.Images[i].loaded) return false;
 	}
@@ -442,7 +444,6 @@ svg.AspectRatio = function(ctx, aspectRatio, width, desiredWidth, height, desire
 
 //Attributes
 svg.Property = function(name, value) {
-	//debugger;
 	this.name = name;
 	this.value = value;
 }
@@ -492,9 +493,10 @@ svg.Property.prototype.addOpacity = function(opacityProp) {
 // get the definition from the definitions table
 svg.Property.prototype.getDefinition = function() {
 	var name = this.value.match(/#([^\)'"]+)/);
-	
+	// console.log('name',name);
 	if (name) { name = name[1]; }
 	if (!name) { name = this.value; }
+	// debugger;
 	return svg.Definitions[name];
 }
 
@@ -503,8 +505,8 @@ svg.Property.prototype.isUrlDefinition = function() {
 }
 
 svg.Property.prototype.getFillStyleDefinition = function(e, opacityProp) {
+	
 	var def = this.getDefinition();
-	// gradient
 	if (def != null && def.createGradient) {
 		return def.createGradient(svg.ctx, e, opacityProp);
 	}
@@ -615,7 +617,7 @@ svg.CreateElement = function(nodeName,nodeAttributes,textValue) {
 	else {
 		e = new svg.Element.MISSING(nodeName,nodeAttributes);
 	}
-
+	e.svgId = svg.getSvgId;
 	e.svgtype = nodeName;
 	return e;
 }
@@ -645,126 +647,61 @@ svg.loadXmlDoc = function() {
 	e.root = true;
 	e.addStylesFromStyleDefinition();
 
-
-	var mapXY = function(p) {
-		var e = ctx.canvas;
-		while (e) {
-			p.x -= e.offsetLeft;
-			p.y -= e.offsetTop;
-			e = e.offsetParent;
-		}
-		if (window.scrollX) p.x += window.scrollX;
-		if (window.scrollY) p.y += window.scrollY;
-		return p;
-	}
-
-	// bind mouse
-	if (svg.opts['ignoreMouse'] != true) {
-		ctx.canvas.onclick = function(e) {
-			var p = mapXY(new svg.Point(e != null ? e.clientX : event.clientX, e != null ? e.clientY : event.clientY));
-			svg.Mouse.onclick(p.x, p.y);
-		};
-		ctx.canvas.onmousemove = function(e) {
-			var p = mapXY(new svg.Point(e != null ? e.clientX : event.clientX, e != null ? e.clientY : event.clientY));
-			svg.Mouse.onmousemove(p.x, p.y);
-		};
-	}
-
 	// render loop
-	var isFirstRender = true;
-	var draw = function() {
-		svg.ViewPort.Clear();
-		if (ctx.canvas.parentNode) svg.ViewPort.SetCurrent(ctx.canvas.parentNode.clientWidth, ctx.canvas.parentNode.clientHeight);
+	svg.draw(e);
+}
+svg.draw = function(e) {
+	ctx = svg.ctx;
+	svg.ViewPort.Clear();
+	if (ctx.canvas.parentNode) svg.ViewPort.SetCurrent(ctx.canvas.parentNode.clientWidth, ctx.canvas.parentNode.clientHeight);
 
-		if (svg.opts['ignoreDimensions'] != true) {
-			// set canvas size
-			if (e.style('width').hasValue()) {
-				ctx.canvas.width = e.style('width').toPixels('x');
-				ctx.canvas.style.width = ctx.canvas.width + 'px';
-			}
-			if (e.style('height').hasValue()) {
-				ctx.canvas.height = e.style('height').toPixels('y');
-				ctx.canvas.style.height = ctx.canvas.height + 'px';
-			}
+	if (svg.opts['ignoreDimensions'] != true) {
+		// set canvas size
+		if (e.style('width').hasValue()) {
+			ctx.canvas.width = e.style('width').toPixels('x');
+			ctx.canvas.style.width = ctx.canvas.width + 'px';
 		}
-		var cWidth = ctx.canvas.clientWidth || ctx.canvas.width;
-		var cHeight = ctx.canvas.clientHeight || ctx.canvas.height;
-		if (svg.opts['ignoreDimensions'] == true && e.style('width').hasValue() && e.style('height').hasValue()) {
-			cWidth = e.style('width').toPixels('x');
-			cHeight = e.style('height').toPixels('y');
-		}
-		svg.ViewPort.SetCurrent(cWidth, cHeight);
-
-		if (svg.opts['offsetX'] != null) e.attribute('x', true).value = svg.opts['offsetX'];
-		if (svg.opts['offsetY'] != null) e.attribute('y', true).value = svg.opts['offsetY'];
-		if (svg.opts['scaleWidth'] != null || svg.opts['scaleHeight'] != null) {
-			var xRatio = null, yRatio = null, viewBox = svg.ToNumberArray(e.attribute('viewBox').value);
-
-			if (svg.opts['scaleWidth'] != null) {
-				if (e.attribute('width').hasValue()) xRatio = e.attribute('width').toPixels('x') / svg.opts['scaleWidth'];
-				else if (!isNaN(viewBox[2])) xRatio = viewBox[2] / svg.opts['scaleWidth'];
-			}
-
-			if (svg.opts['scaleHeight'] != null) {
-				if (e.attribute('height').hasValue()) yRatio = e.attribute('height').toPixels('y') / svg.opts['scaleHeight'];
-				else if (!isNaN(viewBox[3])) yRatio = viewBox[3] / svg.opts['scaleHeight'];
-			}
-
-			if (xRatio == null) { xRatio = yRatio; }
-			if (yRatio == null) { yRatio = xRatio; }
-
-			e.attribute('width', true).value = svg.opts['scaleWidth'];
-			e.attribute('height', true).value = svg.opts['scaleHeight'];
-			e.style('transform', true, true).value += ' scale('+(1.0/xRatio)+','+(1.0/yRatio)+')';
-		}
-
-		// clear and render
-		if (svg.opts['ignoreClear'] != true) {
-			ctx.clearRect(0, 0, cWidth, cHeight);
-		}
-		e.render(ctx);
-		if (isFirstRender) {
-			isFirstRender = false;
-			if (typeof svg.opts['renderCallback'] == 'function') svg.opts['renderCallback'](svg);
+		if (e.style('height').hasValue()) {
+			ctx.canvas.height = e.style('height').toPixels('y');
+			ctx.canvas.style.height = ctx.canvas.height + 'px';
 		}
 	}
-	draw();
-	var waitingForImages = true;
-	if (svg.ImagesLoaded()) {
-		waitingForImages = false;
-		draw();
+	var cWidth = ctx.canvas.clientWidth || ctx.canvas.width;
+	var cHeight = ctx.canvas.clientHeight || ctx.canvas.height;
+	if (svg.opts['ignoreDimensions'] == true && e.style('width').hasValue() && e.style('height').hasValue()) {
+		cWidth = e.style('width').toPixels('x');
+		cHeight = e.style('height').toPixels('y');
 	}
-	svg.intervalID = setInterval(function() {
-		var needUpdate = false;
+	svg.ViewPort.SetCurrent(cWidth, cHeight);
 
-		if (waitingForImages && svg.ImagesLoaded()) {
-			waitingForImages = false;
-			needUpdate = true;
+	if (svg.opts['offsetX'] != null) e.attribute('x', true).value = svg.opts['offsetX'];
+	if (svg.opts['offsetY'] != null) e.attribute('y', true).value = svg.opts['offsetY'];
+	if (svg.opts['scaleWidth'] != null || svg.opts['scaleHeight'] != null) {
+		var xRatio = null, yRatio = null, viewBox = svg.ToNumberArray(e.attribute('viewBox').value);
+
+		if (svg.opts['scaleWidth'] != null) {
+			if (e.attribute('width').hasValue()) xRatio = e.attribute('width').toPixels('x') / svg.opts['scaleWidth'];
+			else if (!isNaN(viewBox[2])) xRatio = viewBox[2] / svg.opts['scaleWidth'];
 		}
 
-		// need update from mouse events?
-		if (svg.opts['ignoreMouse'] != true) {
-			needUpdate = needUpdate | svg.Mouse.hasEvents();
+		if (svg.opts['scaleHeight'] != null) {
+			if (e.attribute('height').hasValue()) yRatio = e.attribute('height').toPixels('y') / svg.opts['scaleHeight'];
+			else if (!isNaN(viewBox[3])) yRatio = viewBox[3] / svg.opts['scaleHeight'];
 		}
 
-		// need update from animations?
-		if (svg.opts['ignoreAnimation'] != true) {
-			for (var i=0; i<svg.Animations.length; i++) {
-				needUpdate = needUpdate | svg.Animations[i].update(1000 / svg.FRAMERATE);
-			}
-		}
+		if (xRatio == null) { xRatio = yRatio; }
+		if (yRatio == null) { yRatio = xRatio; }
 
-		// need update from redraw?
-		if (typeof svg.opts['forceRedraw'] == 'function') {
-			if (svg.opts['forceRedraw']() == true) needUpdate = true;
-		}
+		e.attribute('width', true).value = svg.opts['scaleWidth'];
+		e.attribute('height', true).value = svg.opts['scaleHeight'];
+		e.style('transform', true, true).value += ' scale('+(1.0/xRatio)+','+(1.0/yRatio)+')';
+	}
 
-		// render if needed
-		if (needUpdate) {
-			draw();
-			svg.Mouse.runEvents(); // run and clear our events
-		}
-	}, 1000 / svg.FRAMERATE);
+	// clear and render
+	if (svg.opts['ignoreClear'] != true) {
+		ctx.clearRect(0, 0, cWidth, cHeight);
+	}
+	e.render(ctx);
 }
 
 svg.stop = function() {
@@ -879,6 +816,7 @@ svg.Element.ElementBase = function(nodeName,nodeAttributes) {
 
 		// add id
 		if (this.attribute('id').hasValue()) {
+			console.log('ID',this);
 			if (svg.Definitions[this.attribute('id').value] == null) {
 				svg.Definitions[this.attribute('id').value] = this;
 			}
@@ -925,6 +863,30 @@ svg.Element.ElementBase.prototype.cloneNode = function(){
 
 svg.Element.ElementBase.prototype.setAttribute = function(name,value){
 	this.attributes[name] = new svg.Property(name,value);
+	this.addStylesFromStyleDefinition();
+	if (this.attribute('style').hasValue()) {
+		// console.log('=== attribute style ===');
+		var styles = this.attribute('style').value.split(';');
+		for (var i=0; i<styles.length; i++) {
+			if (svg.trim(styles[i]) != '') {
+				var style = styles[i].split(':');
+				var name = svg.trim(style[0]);
+				var value = svg.trim(style[1]);
+				this.styles[name] = new svg.Property(name, value);
+			}
+		}
+	}
+
+
+	// add id
+	if (this.attribute('id').hasValue()) {
+		if (svg.Definitions[this.attribute('id').value] == null) {
+			svg.Definitions[this.attribute('id').value] = this;
+		}
+	}
+
+	this.styles['transform'] = this.attributes['transform'];
+	this.styles['fill'] = this.attributes['fill'];
 }
 svg.Element.ElementBase.prototype.getAttribute = function(name){
 	var propertyObj = this.attribute(name);
@@ -1017,6 +979,38 @@ svg.Element.ElementBase.prototype.addChild = function(childElement, create){
 	childElement.parent = this;
 	if(childElement.svgtype != 'title'){
 		this.children.push(childElement);
+	}
+}
+
+svg.Element.ElementBase.prototype.getNextSibling = function(){
+	var parent = this.parent;
+	var seatId;
+	if(parent){
+		for(var i = 0; i< parent.children.length;i++){
+			if(parent.children[i].svgId == this.svgId){
+				seatId = i;
+				break;
+			}
+		}
+	}
+	if(seatId!==undefined && parent.children[seatId+1]){
+		return parent.children[seatId+1];
+	}else{
+		return null;
+	}
+
+}
+
+svg.Element.ElementBase.prototype.insertBefore = function(nshape,sibling){
+	var seatId;
+	for(var i = 0; i < this.children.length; i++){
+		if(this.children[i].svgId == nshape.svgId){
+			seatId = i;
+			break;
+		}
+	}
+	if(seatId!==undefined){
+		this.children.splice(seatId-1,0,sibling);
 	}
 }
 
@@ -2510,14 +2504,15 @@ svg.Element.image = function(nodeName,nodeAttributes) {
 
 	var href = this.getHrefAttribute().value;
 	if (href == '') { return; }
-	var isSvg = href.match(/\.svg$/)
+	console.log(href);
+	var isSvg = href.match(/\.svg$/);
 	svg.Images.push(this);
-	this.loaded = false;ƒc
+	this.loaded = false;
 	if (!isSvg) {
 		this.img = document.createElement('img');
 		if (svg.opts['useCORS'] == true) { this.img.crossOrigin = 'Anonymous'; }
 		var self = this;
-		this.img.onload = function() { self.loaded = true; console.log('喜大普奔 loaded loaded loaded')}
+		this.img.onload = function() { self.loaded = true; console.log('喜大普奔 loaded loaded loaded');svg.imageloading = true}
 		this.img.onerror = function() { svg.log('ERROR: image "' + href + '" not found'); self.loaded = true; }
 		this.img.src = href;
 	}
@@ -2535,11 +2530,11 @@ svg.Element.image.prototype.renderChildren = function(ctx) {
 	var height = this.attribute('height').toPixels('y');
 	if (width == 0 || height == 0) return;
 
+	var isSvg = false;
 	ctx.save();
 	if (isSvg) {
 		ctx.drawSvg(this.img, x, y, width, height);
-	}
-	else {
+	}else {
 		ctx.translate(x, y);
 		svg.AspectRatio(ctx,
 						this.attribute('preserveAspectRatio').value,
@@ -2952,6 +2947,3 @@ svg.Element.MISSING = function(nodeName,nodeAttributes) {
 	svg.log('ERROR: Element \'' + nodeName + '\' not yet implemented.');
 }
 svg.Element.MISSING.prototype = new svg.Element.ElementBase;
-
-
-
